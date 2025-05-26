@@ -9,7 +9,6 @@ from .models import (
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import DateInput, DateTimeInput
 
-# Общие формы (оставляем без изменений)
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
@@ -26,7 +25,6 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'password1', 'password2']
 
-# Формы для услуг
 class RecordingServiceForm(forms.ModelForm):
     datetime = forms.DateTimeField(
         widget=DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -69,7 +67,6 @@ class InstrumentalServiceForm(forms.ModelForm):
             'remake_beat': "Нужен ремейк бита",
         }
 
-# Аналогично для LyricsServiceForm и FullSongServiceForm
 class LyricsServiceForm(forms.ModelForm):
     deadline = forms.DateTimeField(
         widget=DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -90,7 +87,6 @@ class FullSongServiceForm(forms.ModelForm):
         model = FullSongServiceParams
         fields = ['references', 'deadline']
 
-# Комбинированная форма для создания услуги
 class CreateServiceForm(forms.ModelForm):
     class Meta:
         model = Service

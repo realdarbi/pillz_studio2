@@ -15,19 +15,16 @@
     {% if user.is_authenticated %}
     <div class="booking-form">
         <h2>Записаться</h2>
-        <form method="post">
+        <form method="post" id="booking-form">
             {% csrf_token %}
-
             <div class="form-group">
                 <label for="id_date">Дата записи:</label>
                 <input type="date" id="id_date" name="date" required>
             </div>
-
             <div class="form-group">
                 <label for="id_notes">Дополнительная информация:</label>
                 <textarea id="id_notes" name="notes" rows="3"></textarea>
             </div>
-
             <button type="submit" class="submit-btn">Подтвердить запись</button>
         </form>
     </div>
@@ -37,20 +34,8 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
 
 {% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const dateInput = document.getElementById('id_date');
-        if (dateInput) {
-            // Устанавливаем минимальную дату - сегодня
-            const today = new Date();
-            const dd = String(today.getDate()).padStart(2, '0');
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const yyyy = today.getFullYear();
-            dateInput.min = `${yyyy}-${mm}-${dd}`;
-        }
-    });
-</script>
-{% endblock %}
+<script src="{% static 'studio/js/service_detail.js' %}"></script>
 {% endblock %}

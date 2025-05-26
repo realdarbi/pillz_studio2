@@ -19,92 +19,9 @@
 {% endblock %}
 
 {% block service_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Валидация файлов
-        const refInput = document.getElementById('id_references');
-        const refError = document.getElementById('ref-error');
-        const deadlineInput = document.getElementById('id_deadline');
-
-        // Проверка расширения файла
-        function isValidExtension(file, allowedExtensions) {
-            const fileName = file.name.toLowerCase();
-            return allowedExtensions.some(ext => fileName.endsWith(ext));
-        }
-
-        // Валидация файлов
-        refInput.addEventListener('change', function () {
-            refError.style.display = 'none';
-
-            if (this.files.length > 0) {
-                const allowed = ['.txt', '.pdf', '.mp3', '.wav'];
-                let validFiles = [];
-                let invalidFiles = [];
-
-                // Проверяем каждый файл
-                Array.from(this.files).forEach(file => {
-                    if (isValidExtension(file, allowed)) {
-                        validFiles.push(file);
-                    } else {
-                        invalidFiles.push(file.name);
-                    }
-                });
-
-                // Ошибка если есть недопустимые файлы
-                if (invalidFiles.length > 0) {
-                    refError.textContent = `Недопустимые форматы: ${invalidFiles.join(', ')}. Разрешены TXT, PDF, MP3, WAV`;
-                    refError.style.display = 'block';
-
-                    // Создаем новый DataTransfer с только валидными файлами
-                    const dt = new DataTransfer();
-                    validFiles.forEach(file => dt.items.add(file));
-                    this.files = dt.files;
-                }
-
-                // Ошибка если больше 5 файлов
-                if (this.files.length > 5) {
-                    refError.textContent = 'Максимум 5 файлов';
-                    refError.style.display = 'block';
-
-                    // Оставляем только первые 5 файлов
-                    const dt = new DataTransfer();
-                    Array.from(this.files).slice(0, 5).forEach(file => dt.items.add(file));
-                    this.files = dt.files;
-                }
-            }
-        });
-
-        // Проверка дедлайна (минимум 24 часа от текущего момента)
-        deadlineInput.addEventListener('change', function() {
-            const selectedDate = new Date(this.value);
-            const now = new Date();
-            const minDeadline = new Date(now.getTime() + 24 * 60 * 60 * 1000); // +24 часа
-
-            if (selectedDate < minDeadline) {
-                alert('Минимальный срок выполнения - 24 часа');
-                this.value = '';
-            }
-        });
-
-        // Валидация перед отправкой формы
-        document.querySelector('form').addEventListener('submit', function (e) {
-            let isValid = true;
-
-            // Проверка дедлайна
-            if (!deadlineInput.value) {
-                alert('Пожалуйста, укажите срок выполнения');
-                isValid = false;
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-            }
-        });
-    });
-</script>
+<script src="{% static 'studio/js/lyrics.js' %}"></script>
 
 <style>
-    /* Стили для кнопки выбора файла */
     .file-upload-wrapper input[type="file"]::file-selector-button {
         background-color: #050505;
         color: #7b2cbf;
@@ -121,7 +38,6 @@
             border-color: #7b2cbf;
         }
 
-    /* Специфичные стили для услуги написания текста */
     .deadline-hint {
         color: var(--teal);
         font-size: 0.85rem;
@@ -133,7 +49,6 @@
         position: relative;
     }
 
-    /* Адаптация календаря под минимальный срок */
     .flatpickr-calendar .flatpickr-day.disabled {
         color: #555 !important;
         cursor: not-allowed;

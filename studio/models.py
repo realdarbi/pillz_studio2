@@ -55,7 +55,6 @@ class Service(models.Model):
         statuses = dict(self.STATUS_CHOICES)
         return statuses.get(self.status, self.status)
 
-# Модели для параметров услуг
 class RecordingServiceParams(models.Model):
     RECORDING_TYPES = [
         ('instrument', 'Инструмент'),
@@ -93,7 +92,6 @@ class FullSongServiceParams(models.Model):
     references = models.FileField(upload_to='full_song_refs/')
     deadline = models.DateTimeField()
 
-# Оригинальные модели (оставлены без изменений)
 class Portfolio(models.Model):
     title = models.CharField(max_length=100)
     audio_file = models.FileField(upload_to='portfolio/')

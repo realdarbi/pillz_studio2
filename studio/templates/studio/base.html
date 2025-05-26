@@ -1,32 +1,23 @@
-﻿
-<html lang="ru">
+﻿<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Pillz Studio | Студия звукозаписи{% endblock %}</title>
     {% load static %}
 
-    <!-- Подключение шрифтов -->
     <link href="https://ffont.ru/font/dayssansblack?ysclid=mav33g2gsz383649649" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Иконки Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Основные стили -->
     <link rel="stylesheet" href="{% static 'studio/css/style.css' %}">
 
-    <!-- Дополнительные стили для страниц -->
     {% block extra_css %}{% endblock %}
 
     <style>
-        /* Глобальные фоновые эффекты */
         body {
             background: var(--dark);
             min-height: 100vh;
         }
 
-        /* Эффект для всех "таблеток" на сайте */
         .pill-effect {
             position: relative;
             overflow: hidden;
@@ -39,7 +30,7 @@
                 left: -50%;
                 width: 200%;
                 height: 200%;
-                background: radial-gradient( ellipse at center, rgba(187, 134, 252, 0.05) 0%, transparent 70% );
+                background: radial-gradient(ellipse at center, rgba(187, 134, 252, 0.05) 0%, transparent 70%);
                 z-index: -1;
                 pointer-events: none;
             }
@@ -88,7 +79,6 @@
             {% endif %}
 
             {% block content %}
-            <!-- Контент страниц -->
             {% endblock %}
         </div>
     </main>
@@ -110,24 +100,8 @@
         </div>
     </footer>
 
-    <!-- Блок для дополнительных скриптов -->
     {% block extra_js %}
-    <script>
-        // Закрытие уведомлений
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.target.closest('.alert').remove();
-            });
-        });
-
-        // Плавное появление элементов с классом pill-effect
-        document.querySelectorAll('.pill-effect').forEach((el, index) => {
-            setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-            }, 100 * index);
-        });
-    </script>
+    <script src="{% static 'studio/js/base.js' %}"></script>
     {% endblock %}
 </body>
 </html>

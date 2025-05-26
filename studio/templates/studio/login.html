@@ -4,14 +4,12 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'studio/css/auth.css' %}">
 <style>
-    /* Убедитесь, что контейнер занимает всю доступную высоту */
     .login-container {
-        min-height: calc(100vh - 120px); /* Учитываем шапку и подвал */
+        min-height: calc(100vh - 120px);
         display: flex;
         align-items: center;
     }
 
-    /* Плавное появление */
     #login-card {
         animation: fadeIn 0.5s ease-out forwards;
     }
@@ -30,7 +28,10 @@
 
 {% block content %}
 <div class="login-container">
-    <div class="auth-form-container" id="auth-container">
+    <div class="auth-form-container" id="auth-container"
+         data-login-url="{% url 'login' %}"
+         data-register-url="{% url 'register' %}"
+         data-home-url="{% url 'home' %}">
         <div class="login-card" id="login-card">
             <div class="login-header">
                 <img src="{% static 'studio/images/logo.png' %}" alt="Логотип" class="login-logo">
@@ -70,110 +71,5 @@
 
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function () {
-        // Инициализация анимации
-        $('#login-card').hide().fadeIn(500);
-
-        // Обработчик формы входа
-        $('#login-form').on('submit', function (e) {
-            e.preventDefault();
-            var $form = $(this);
-            var $btn = $form.find('.login-btn');
-            var $spinner = $btn.find('.loading-spinner');
-            var $btnText = $btn.find('.btn-text');
-
-            // Показываем индикатор загрузки
-            $btnText.hide();
-            $spinner.show();
-            $btn.prop('disabled', true);
-
-            $.ajax({
-                type: 'POST',
-                url: $form.attr('action'),
-                data: $form.serialize(),
-                success: function (response) {
-                    if (response.success) {
-                        // Плавный переход при успешной авторизации
-                        $('#login-card').fadeOut(300, function () {
-                            window.location.href = response.redirect_url || "{% url 'home' %}";
-                        });
-                    } else if (response.html) {
-                        // Обновление формы с ошибками
-                        $('#login-card').replaceWith(response.html);
-                        initFormEvents();
-                    }
-                },
-                error: function (xhr) {
-                    alert('Ошибка сервера: ' + (xhr.responseJSON?.error || 'Попробуйте позже'));
-                },
-                complete: function () {
-                    $btnText.show();
-                    $spinner.hide();
-                    $btn.prop('disabled', false);
-                }
-            });
-        });
-
-        // Обработчик перехода к регистрации
-        $(document).on('click', '.switch-form[data-target="register"]', function (e) {
-            e.preventDefault();
-            var $authContainer = $('#auth-container');
-
-            // Проверяем, не идет ли уже переход
-            if ($authContainer.data('transitioning')) return;
-            $authContainer.data('transitioning', true);
-
-            // Анимация исчезновения
-            $('#login-card').animate({
-                'opacity': 0,
-                'left': '-100%'
-            }, 500, function () {
-                $(this).remove();
-
-                // Загрузка формы регистрации
-                $.ajax({
-                    url: "{% url 'register' %}",
-                    type: "GET",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.html) {
-                            var $registerCard = $(response.html).css({
-                                'opacity': 0,
-                                'left': '100%'
-                            });
-
-                            $authContainer.append($registerCard);
-
-                            $registerCard.animate({
-                                'opacity': 1,
-                                'left': '0'
-                            }, 500, function () {
-                                $authContainer.data('transitioning', false);
-                            });
-                        }
-                    },
-                    error: function (xhr) {
-                        console.error("AJAX Error:", xhr.responseText);
-                        $authContainer.data('transitioning', false);
-                        // Можно добавить кнопку "Назад" при ошибке
-                    }
-                });
-            });
-        });
-
-        // Инициализация обработчиков
-        function initFormEvents() {
-            $('input').on({
-                focus: function () {
-                    $(this).parent().find('label').css('color', 'var(--secondary)');
-                },
-                blur: function () {
-                    $(this).parent().find('label').css('color', 'var(--text)');
-                }
-            });
-        }
-        initFormEvents();
-    });
-</script>
+<script src="{% static 'studio/js/login.js' %}"></script>
 {% endblock %}

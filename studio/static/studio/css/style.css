@@ -1,16 +1,16 @@
-/* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
+
 :root {
-    --primary: #BB86FC; /* Фиолетовый акцент */
+    --primary: #BB86FC;
     --primary-light: rgba(187, 134, 252, 0.2);
-    --secondary: #03DAC6; /* Тиффани */
-    --dark: #121212; /* Основной фон */
-    --darker: #121212; /* Темные элементы */
-    --text: #E0E0E0; /* Основной текст */
-    --text-light: #FFFFFF; /* Светлый текст */
-    --text-muted: #A0A0A0; /* Второстепенный текст */
+    --secondary: #03DAC6;
+    --dark: #121212; 
+    --darker: #121212; 
+    --text: #E0E0E0; 
+    --text-light: #FFFFFF; 
+    --text-muted: #A0A0A0; 
 }
 
-/* ===== БАЗОВЫЕ СТИЛИ ===== */
+
 * {
     margin: 0;
     padding: 0;
@@ -40,7 +40,7 @@ a {
     padding: 0 20px;
 }
 
-/* ===== ШАПКА ===== */
+
 .header {
     background-color: var(--dark);
     color: var(--text-light);
@@ -127,13 +127,12 @@ a {
         color: #ff6b6b;
     }
 
-/* ===== ОСНОВНОЕ СОДЕРЖИМОЕ ===== */
+
 .main-content {
     flex: 1;
     padding: 40px 0;
 }
 
-/* УВЕДОМЛЕНИЯ */
 .messages {
     margin-bottom: 20px;
 }
@@ -179,7 +178,6 @@ a {
         opacity: 1;
     }
 
-/* ===== ПОДВАЛ ===== */
 .footer {
     background-color: var(--darker);
     color: var(--text-light);
@@ -225,7 +223,6 @@ a {
     opacity: 0.8;
 }
 
-/* ===== АДАПТИВНОСТЬ ===== */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -249,7 +246,6 @@ a {
     }
 }
 
-/* Стили для форм услуг */
 .service-container {
     max-width: 800px;
     margin: 0 auto;
@@ -287,7 +283,6 @@ a {
     font-size: 16px;
 }
 
-/* Стили для карточек в профиле */
 .services-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

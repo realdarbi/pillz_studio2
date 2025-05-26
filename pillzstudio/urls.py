@@ -20,20 +20,20 @@ from django.contrib import admin
 from django.urls import path, include  
 from django.contrib.auth import views as auth_views
 from studio import views
-from django.contrib.auth.views import LogoutView  # Добавьте этот импорт
-
+from django.contrib.auth.views import LogoutView
+from studio.admin import studio_admin
 from django.conf import settings
 from django.conf.urls.static import static
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('studio.urls')),  # Подключаем пути приложения studio
+    path('', include('studio.urls')),
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='studio/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('profile/', views.profile, name='profile'),
-    
+    path('studio-admin/', studio_admin.urls),
 ]
 
 if settings.DEBUG:

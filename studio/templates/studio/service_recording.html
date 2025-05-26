@@ -11,8 +11,8 @@
     <label class="param-label">Продолжительность (часы)</label>
     <div class="slider-container">
         <div class="slider-wrapper">
-            <input type="range" min="1" max="7" value="1" class="hours-slider" id="hoursSlider">
-            <span class="hours-value" id="hoursValue">1</span>
+            <input type="range" min="1" max="7" value="{{ params_form.hours.value|default:1 }}" class="hours-slider" id="hoursSlider">
+            <span class="hours-value" id="hoursValue">{{ params_form.hours.value|default:1 }}</span>
         </div>
         <div class="slider-ticks">
             {% for i in "1234567" %}
@@ -26,8 +26,9 @@
             <span class="checkmark"></span>
             <span>Не уверен в продолжительности</span>
         </label>
+        <small id="unknownHint" class="param-hint" style="display: none;">Цена будет рассчитана после записи. Минимальная — 600₽.</small>
     </div>
-    <input type="hidden" name="hours" id="id_hours" value="1">
+    <input type="hidden" name="hours" id="id_hours" value="{{ params_form.hours.value|default:1 }}">
 </div>
 
 <div class="param-group">
@@ -42,78 +43,12 @@
 
 <div class="param-group">
     <label for="{{ params_form.datetime.id_for_label }}" class="param-label">Дата и время записи</label>
-    <input type="text" id="id_datetime" name="datetime" class="param-control datetime-input" placeholder="Выберите дату и время" readonly>
+    <input type="text" id="id_datetime" name="datetime" class="param-control datetime-input" placeholder="Выберите дату и время" readonly data-default-date="{% if params_form.datetime.value %}{{ params_form.datetime.value|date:'Y-m-d H:i' }}{% endif %}">
 </div>
 {% endblock %}
 
 {% block submit_button_text %}Забронировать время{% endblock %}
 
 {% block service_scripts %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Инициализация календаря для этой конкретной формы
-        flatpickr("#id_datetime", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-            minDate: "today",
-            time_24hr: true,
-            locale: "ru",
-            minuteIncrement: 30,
-            disable: [
-                function (date) {
-                    return (date.getDay() === 0);
-                }
-            ],
-            defaultDate: "{% if params_form.datetime.value %}{{ params_form.datetime.value|date:'Y-m-d H:i' }}{% endif %}"
-        });
-
-        // Логика расчета цены для записи
-        const pricing = {
-            basePrice: 600,
-            additionalHour: 500
-        };
-
-        const elements = {
-            priceDisplay: document.getElementById('calculatedPrice'),
-            slider: document.getElementById('hoursSlider'),
-            valueDisplay: document.getElementById('hoursValue'),
-            hiddenInput: document.getElementById('id_hours'),
-            unknownCheckbox: document.getElementById('id_unknown_hours')
-        };
-
-        function updateSliderUI(value) {
-            elements.valueDisplay.textContent = value;
-            elements.hiddenInput.value = value;
-        }
-
-        function calculatePrice() {
-            const hours = parseInt(elements.hiddenInput.value) || 1;
-            const unknownHours = elements.unknownCheckbox.checked;
-
-            if (unknownHours) return pricing.basePrice;
-            if (hours === 1) return pricing.basePrice;
-            if (hours === 2) return pricing.basePrice * 2;
-            return pricing.additionalHour * hours;
-        }
-
-        function updatePriceDisplay() {
-            elements.priceDisplay.textContent = calculatePrice();
-        }
-
-        elements.slider.addEventListener('input', function () {
-            updateSliderUI(this.value);
-            updatePriceDisplay();
-        });
-
-        elements.unknownCheckbox.addEventListener('change', function () {
-            elements.slider.disabled = this.checked;
-            elements.valueDisplay.style.opacity = this.checked ? 0.5 : 1;
-            updatePriceDisplay();
-        });
-
-        // Инициализация
-        updateSliderUI(elements.slider.value);
-        updatePriceDisplay();
-    });
-</script>
+<script src="{% static 'studio/js/service_recording.js' %}"></script>
 {% endblock %}

@@ -1,4 +1,3 @@
-/* ===== ОСНОВНЫЕ ПЕРЕМЕННЫЕ ===== */
 :root {
     --primary: #BB86FC;
     --primary-light: rgba(187, 134, 252, 0.2);
@@ -11,7 +10,6 @@
     --pill-glow: rgba(187, 134, 252, 0.15);
 }
 
-/* ===== АНИМАЦИИ ===== */
 @keyframes pill-float {
     0%, 100% {
         transform: translateY(0) rotate(0deg);
@@ -50,7 +48,6 @@
     }
 }
 
-/* ===== ОСНОВНЫЕ СТИЛИ ===== */
 .login-container {
     display: flex;
     justify-content: center;
@@ -113,7 +110,6 @@
         transform: rotate(15deg) scale(1.1);
     }
 
-/* Стили форм */
 .auth-form, .login-form {
     padding: 40px 30px;
 }
@@ -151,7 +147,6 @@
             outline: none;
         }
 
-/* Кнопки */
 .login-btn, .submit-btn {
     background: linear-gradient(135deg, var(--primary), #7F4BFF);
     color: var(--darker);
@@ -176,7 +171,6 @@
         box-shadow: 0 6px 20px rgba(187, 134, 252, 0.4);
     }
 
-/* Ссылки */
 .login-links, .auth-links {
     display: flex;
     justify-content: space-between;
@@ -195,7 +189,6 @@
             color: var(--secondary);
         }
 
-/* Адаптивность */
 @media (max-width: 576px) {
     .login-header {
         padding: 30px 20px;
@@ -217,7 +210,6 @@
 }
 
 
-/* Стили для ошибок */
 .form-errors {
     margin: 0 30px 20px;
     animation: fadeIn 0.3s ease-out;

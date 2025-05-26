@@ -32,7 +32,9 @@ FILE_CHARSET = 'utf-8'
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'admin_interface',
+    'colorfield',  # Должен быть сразу после admin_interface
+    'django.contrib.admin',  # Только один раз!
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -40,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'studio',
 ]
-
+X_FRAME_OPTIONS = 'SAMEORIGIN'  # Для виджетов
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -56,7 +58,7 @@ ROOT_URLCONF = 'pillzstudio.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Добавьте эту строку
+        'DIRS': [BASE_DIR / 'templates'],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,7 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pillzstudio.wsgi.application'
 
-LOGIN_REDIRECT_URL = 'profile'  # Перенаправлять на профиль после входа
+LOGIN_REDIRECT_URL = 'profile'  
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
@@ -81,9 +83,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-LOGIN_URL = 'login'  # Указывает на ваш URL name для входа
-LOGIN_REDIRECT_URL = 'profile'  # Куда перенаправлять после входа
-LOGOUT_REDIRECT_URL = 'home'  # Куда перенаправлять после выхода
+LOGIN_URL = 'login' 
+LOGIN_REDIRECT_URL = 'profile'
+LOGOUT_REDIRECT_URL = 'home'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -121,8 +123,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "studio/static",  # Путь к статике внутри приложения studio
-    # BASE_DIR / "static",      # Можно добавить глобальную папку static (если есть)
+    BASE_DIR / "studio/static", 
+    # BASE_DIR / "static", 
 ]
 
 # Default primary key field type

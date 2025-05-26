@@ -14,7 +14,7 @@ from .forms import RegisterForm, BookingForm
 import logging
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.db.models import Q
-from django.views.decorators.http import require_POST  # Добавьте этот импорт
+from django.views.decorators.http import require_POST
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +55,8 @@ class CustomLoginView(LoginView):
             login(self.request, form.get_user())
             return JsonResponse({
                 'success': True,
-                'redirect_url': self.get_success_url(),  # Используем встроенный метод
-                'user_authenticated': True  # Добавляем флаг аутентификации
+                'redirect_url': self.get_success_url(), 
+                'user_authenticated': True  
             }, content_type='application/json; charset=utf-8')
         return super().form_valid(form)
     
@@ -73,7 +73,7 @@ class CustomLoginView(LoginView):
                 return JsonResponse({
                     'success': False,
                     'html': html,
-                    'errors': form.errors.get_json_data()  # Добавляем ошибки формы
+                    'errors': form.errors.get_json_data() 
                 }, status=400, content_type='application/json; charset=utf-8')
             except Exception as e:
                 logger.error(f"Error rendering invalid login form: {str(e)}")
@@ -117,7 +117,6 @@ def register(request):
                     }, status=400)
                 messages.error(request, f"Ошибка регистрации: {str(e)}")
         
-        # Для AJAX возвращаем форму с ошибками
         if is_ajax(request):
             return JsonResponse({
                 'success': False,
@@ -128,7 +127,6 @@ def register(request):
                 )
             }, status=400)
     
-    # GET запрос
     form = RegisterForm()
     
     if is_ajax(request):
@@ -150,7 +148,6 @@ def custom_logout(request):
 
 
 
-# Добавляем новые импорты в начало файла
 from .forms import (
     RecordingServiceForm, MixingServiceForm, 
     InstrumentalServiceForm, LyricsServiceForm,
@@ -162,7 +159,6 @@ from .models import (
     FullSongServiceParams
 )
 
-# Обновляем service_detail view
 @login_required
 def service_detail(request, pk):
     service_type = get_object_or_404(ServiceType, pk=pk)
@@ -182,7 +178,6 @@ def service_detail(request, pk):
         
         if params_form.is_valid():
             try:
-                # Создаем услугу
                 service = Service(
                     client=request.user,
                     service_type=service_type,
@@ -191,7 +186,6 @@ def service_detail(request, pk):
                     date_ordered=timezone.now()
                 )
                 
-                # Рассчитываем цену
                 cleaned_data = params_form.cleaned_data
                 
                 if service_type.category == 'recording':
@@ -210,7 +204,6 @@ def service_detail(request, pk):
                 
                 service.save()
                 
-                # Создаем параметры
                 params = params_form.save(commit=False)
                 params.service = service
                 params.save()
@@ -232,13 +225,9 @@ def service_detail(request, pk):
     
     return render(request, f'studio/service_{service_type.category}.html', context)
 
-# Удаляем старую BookingForm (если больше не используется)
-# Или оставляем для других целей
-
-# Обновляем profile view для отображения параметров услуг
+@login_required
 @login_required
 def profile(request):
-    # Обработка загрузки аватара
     if request.method == 'POST' and 'avatar' in request.FILES:
         profile, created = Profile.objects.get_or_create(user=request.user)
         profile.avatar = request.FILES['avatar']
@@ -246,79 +235,54 @@ def profile(request):
         messages.success(request, 'Аватар успешно обновлен!')
         return redirect('profile')
     
-    # Получаем активные заказы (не завершенные и не отмененные)
-    active_orders = Service.objects.filter(
+    active_bookings = Service.objects.filter(
         client=request.user
     ).exclude(
         Q(status='completed') | Q(status='canceled')
     ).order_by('-date_ordered')
     
-    # Получаем завершенные заказы
     completed_orders = Service.objects.filter(
         client=request.user,
         status='completed'
     ).order_by('-date_completed')
     
-    # Готовим данные для отображения
-    active_orders_data = []
-    for order in active_orders:
-        params = None
-        if hasattr(order, 'recording_params'):
-            params = order.recording_params
-        elif hasattr(order, 'mixing_params'):
-            params = order.mixing_params
-        elif hasattr(order, 'instrumental_params'):
-            params = order.instrumental_params
-        elif hasattr(order, 'lyrics_params'):
-            params = order.lyrics_params
-        elif hasattr(order, 'full_song_params'):
-            params = order.full_song_params
-        
-        active_orders_data.append({
-            'service': order,
-            'params': params
-        })
-    
-    completed_orders_data = []
-    for order in completed_orders:
-        params = None
-        if hasattr(order, 'recording_params'):
-            params = order.recording_params
-        elif hasattr(order, 'mixing_params'):
-            params = order.mixing_params
-        elif hasattr(order, 'instrumental_params'):
-            params = order.instrumental_params
-        elif hasattr(order, 'lyrics_params'):
-            params = order.lyrics_params
-        elif hasattr(order, 'full_song_params'):
-            params = order.full_song_params
-        
-        completed_orders_data.append({
-            'service': order,
-            'params': params
-        })
-    
     return render(request, 'studio/profile.html', {
         'user': request.user,
-        'active_bookings': active_orders_data,
-        'completed_orders': completed_orders_data
+        'active_bookings': active_bookings,
+        'completed_orders': completed_orders
     })
 @login_required
 @require_POST
 def cancel_order(request, order_id):
-    order = get_object_or_404(Service, id=order_id, client=request.user)
+    try:
+        order = Service.objects.get(id=order_id, client=request.user)
+        
+        if order.status == 'pending':
+            order.status = 'canceled'
+            order.save()
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success', 'message': 'Запись успешно отменена'})
+            
+            messages.success(request, 'Запись успешно отменена')
+            return redirect('profile')
+        
+        error_msg = 'Невозможно отменить запись в текущем статусе'
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': error_msg}, status=400)
+        
+        messages.error(request, error_msg)
+        return redirect('profile')
     
-    if order.status == 'pending':
-        order.status = 'canceled'
-        order.save()
-        messages.success(request, 'Заказ успешно отменен')
-        return JsonResponse({'status': 'success'})
-    
-    messages.error(request, 'Невозможно отменить заказ в текущем статусе')
-    return JsonResponse({'status': 'error'}, status=400)
+    except Service.DoesNotExist:
+        error_msg = 'Запись не найдена'
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'error', 'message': error_msg}, status=404)
+        
+        messages.error(request, error_msg)
+        return redirect('profile')
 
 def home(request):
-    # Порядок категорий для сортировки
     CATEGORY_ORDER = ['recording', 'mixing', 'instrumental', 'lyrics', 'full_song']
     
     services = sorted(

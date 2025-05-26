@@ -1,0 +1,46 @@
+﻿{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Статистика студии</h1>
+
+    <div class="stats-section">
+        <h2>Финансы</h2>
+        <div class="stat-card">
+            <h3>Общий доход: {{ total_income|default:0 }} ₽</h3>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <h2>Услуги</h2>
+        <table>
+            <tr>
+                <th>Услуга</th>
+                <th>Статус</th>
+                <th>Количество</th>
+                <th>Сумма</th>
+            </tr>
+            {% for stat in services_stats %}
+            <tr>
+                <td>{{ stat.service_type__name }}</td>
+                <td>{{ stat.status }}</td>
+                <td>{{ stat.count }}</td>
+                <td>{{ stat.total }} ₽</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="stats-section">
+        <h2>Последние заказы</h2>
+        <ul>
+            {% for order in recent_orders %}
+            <li>
+                {{ order.client.username }} - {{ order.service_type.name }}
+                ({{ order.date_ordered|date:"d.m.Y" }})
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

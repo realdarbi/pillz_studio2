@@ -26,28 +26,3 @@
         </div>
     </form>
 </div>
-
-<script>
-    $(document).ready(function () {
-        // Анимация появления
-        $('#login-card').css({
-            'opacity': '0',
-            'transform': 'translateY(20px)'
-        });
-
-        setTimeout(() => {
-            $('#login-card').css({
-                'transition': 'all 0.5s ease',
-                'opacity': '1',
-                'transform': 'translateY(0)'
-            });
-        }, 100);
-
-        // Подсветка активного поля
-        $('input').on('focus', function () {
-            $(this).parent().find('label').css('color', 'var(--secondary)');
-        }).on('blur', function () {
-            $(this).parent().find('label').css('color', 'var(--text)');
-        });
-    });
-</script>

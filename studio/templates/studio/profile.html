@@ -3,6 +3,76 @@
 
 {% block content %}
 <style>
+    .booking-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 200px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cancel-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        z-index: 1000;
+        animation: slideIn 0.3s ease-out;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+        .cancel-notification.success {
+            background-color: #28a745;
+        }
+
+        .cancel-notification.error {
+            background-color: #dc3545;
+        }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .bookings-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        transition: all 0.3s ease;
+    }
+
+
+    .booking-card[hidden] {
+        display: none !important;
+    }
+
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .booking-card:not([hidden]) {
+        animation: fadeIn 0.3s ease forwards;
+    }
+
     .profile-container {
         max-width: 1200px;
         margin: 0 auto;
@@ -435,14 +505,14 @@
                 {% for booking in active_bookings %}
                 <div class="booking-card" data-status="{{ booking.status }}">
                     <div class="booking-header">
-                        <h3>{{ booking.service.name }}</h3>
+                        <h3>{{ booking.service_type.name }}</h3>
                         <span class="booking-status {{ booking.status }}">
                             {{ booking.get_status_display }}
                         </span>
                     </div>
 
                     <div class="booking-details">
-                        <p><i class="far fa-calendar-alt"></i> {{ booking.created_at|date:"d.m.Y H:i" }}</p>
+                        <p><i class="far fa-calendar-alt"></i> {{ booking.date_ordered|date:"d.m.Y H:i" }}</p>
                         {% if booking.deadline %}
                         <p><i class="fas fa-clock"></i> Срок: {{ booking.deadline|date:"d.m.Y H:i" }}</p>
                         {% endif %}
@@ -475,22 +545,24 @@
                 {% for order in completed_orders %}
                 <div class="service-card">
                     <div class="service-info">
-                        <h3>{{ order.service.name }}</h3>
+                        <h3>{{ order.service_type.name }}</h3>
                         <p class="service-price">{{ order.price }} руб.</p>
                         <p class="service-date">
-                            Заказано: {{ order.created_at|date:"d.m.Y H:i" }}<br>
-                            Завершено: {{ order.completed_at|date:"d.m.Y H:i" }}
+                            Заказано: {{ order.date_ordered|date:"d.m.Y H:i" }}<br>
+                            {% if order.date_completed %}
+                            Завершено: {{ order.date_completed|date:"d.m.Y H:i" }}
+                            {% endif %}
                         </p>
 
                         <div class="service-params">
-                            {% if order.service.category == 'recording' %}
-                            <p><strong>Тип записи:</strong> {{ order.get_recording_type_display }}</p>
-                            <p><strong>Часов:</strong> {{ order.hours }}</p>
-                            {% elif order.service.category == 'mixing' %}
-                            <p><strong>Экспресс:</strong> {% if order.express %}Да{% else %}Нет{% endif %}</p>
-                            <p><strong>Мастеринг:</strong> {% if order.mastering %}Да{% else %}Нет{% endif %}</p>
-                            {% elif order.service.category == 'lyrics' %}
-                            <p><strong>Тип текста:</strong> {{ order.get_text_type_display }}</p>
+                            {% if order.service_type.category == 'recording' and order.recording_params %}
+                            <p><strong>Тип записи:</strong> {{ order.recording_params.get_recording_type_display }}</p>
+                            <p><strong>Часов:</strong> {{ order.recording_params.hours }}</p>
+                            {% elif order.service_type.category == 'mixing' and order.mixing_params %}
+                            <p><strong>Экспресс:</strong> {% if order.mixing_params.express %}Да{% else %}Нет{% endif %}</p>
+                            <p><strong>Мастеринг:</strong> {% if order.mixing_params.mastering %}Да{% else %}Нет{% endif %}</p>
+                            {% elif order.service_type.category == 'lyrics' and order.lyrics_params %}
+                            <p><strong>Тип текста:</strong> {{ order.lyrics_params.get_text_type_display }}</p>
                             {% endif %}
                         </div>
 
@@ -503,9 +575,11 @@
 
                     <div class="service-status completed">
                         <span>Завершено</span>
+                        {% if order.date_completed %}
                         <p class="completed-date">
-                            {{ order.completed_at|date:"d.m.Y" }}
+                            {{ order.date_completed|date:"d.m.Y" }}
                         </p>
+                        {% endif %}
                     </div>
                 </div>
                 {% endfor %}
@@ -520,66 +594,4 @@
         </section>
     </div>
 </div>
-
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Фильтрация записей
-        const filterButtons = document.querySelectorAll('.btn-filter');
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const filter = this.dataset.filter;
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-
-                const bookings = document.querySelectorAll('.booking-card');
-                bookings.forEach(booking => {
-                    if (filter === 'all' || booking.dataset.status === filter) {
-                        booking.style.display = 'flex';
-                    } else {
-                        booking.style.display = 'none';
-                    }
-                });
-            });
-        });
-
-        // Отмена записи
-        document.querySelectorAll('.btn-cancel').forEach(button => {
-            button.addEventListener('click', async function() {
-                const bookingId = this.dataset.bookingId;
-                if (confirm('Вы уверены, что хотите отменить эту запись?')) {
-                    try {
-                        const response = await fetch(`/bookings/${bookingId}/cancel/`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRFToken': '{{ csrf_token }}',
-                                'Content-Type': 'application/json'
-                            }
-                        });
-
-                        if (response.ok) {
-                            location.reload();
-                        } else {
-                            alert('Ошибка при отмене записи');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Произошла ошибка');
-                    }
-                }
-            });
-        });
-
-        // Раскрытие деталей услуги
-        document.querySelectorAll('.service-card').forEach(card => {
-            card.addEventListener('click', function (e) {
-                if (!e.target.closest('.service-status') && !e.target.closest('.btn-cancel')) {
-                    this.classList.toggle('expanded');
-                }
-            });
-        });
-    });
-</script>
-{% endblock %}
 {% endblock %}

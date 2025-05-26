@@ -1,0 +1,36 @@
+.file-upload-wrapper input[type="file"]::file-selector-button {
+    background-color: #050505;
+    color: #7b2cbf;
+    border: 1px solid #00c2cb;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .file-upload-wrapper input[type="file"]::file-selector-button:hover {
+        background-color: #121212;
+        border-color: #7b2cbf;
+    }
+
+.deadline-hint {
+    color: var(--teal);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.price-notice {
+    background: rgba(123, 44, 191, 0.1);
+    border-left: 3px solid var(--purple);
+    padding: 0.8rem;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+.flatpickr-calendar .flatpickr-day.disabled {
+    color: #555 !important;
+    cursor: not-allowed;
+}

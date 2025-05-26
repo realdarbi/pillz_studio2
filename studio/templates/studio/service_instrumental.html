@@ -30,97 +30,11 @@
 
 {% block service_scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Валидация аудиофайлов
-        const refInput = document.getElementById('id_references');
-        const refError = document.getElementById('ref-error');
-
-        // Проверка расширения файла
-        function isValidExtension(file, allowedExtensions) {
-            const fileName = file.name.toLowerCase();
-            return allowedExtensions.some(ext => fileName.endsWith(ext));
-        }
-
-        // Валидация аудиофайлов
-        refInput.addEventListener('change', function () {
-            refError.style.display = 'none';
-
-            if (this.files.length > 0) {
-                const allowed = ['.mp3', '.wav'];
-                let validFiles = [];
-                let invalidFiles = [];
-
-                // Проверяем каждый файл
-                Array.from(this.files).forEach(file => {
-                    if (isValidExtension(file, allowed)) {
-                        validFiles.push(file);
-                    } else {
-                        invalidFiles.push(file.name);
-                    }
-                });
-
-                // Ошибка если есть недопустимые файлы
-                if (invalidFiles.length > 0) {
-                    refError.textContent = `Недопустимые форматы: ${invalidFiles.join(', ')}. Только MP3/WAV`;
-                    refError.style.display = 'block';
-
-                    // Создаем новый DataTransfer с только валидными файлами
-                    const dt = new DataTransfer();
-                    validFiles.forEach(file => dt.items.add(file));
-                    this.files = dt.files;
-                }
-
-                // Ошибка если больше 5 файлов
-                if (this.files.length > 5) {
-                    refError.textContent = 'Максимум 5 файлов';
-                    refError.style.display = 'block';
-
-                    // Оставляем только первые 5 файлов
-                    const dt = new DataTransfer();
-                    Array.from(this.files).slice(0, 5).forEach(file => dt.items.add(file));
-                    this.files = dt.files;
-                }
-            }
-        });
-
-        // Расчет стоимости
-        const beatCheckbox = document.getElementById('id_remake_beat');
-        const priceDisplay = document.getElementById('calculatedPrice');
-        const BASE_PRICE = {{ service.min_price }}; // 2000 из Django
-
-        
-
-        // Валидация перед отправкой формы
-        document.querySelector('form').addEventListener('submit', function (e) {
-            let isValid = true;
-
-            // Проверка референсов (необязательное поле)
-            if (refInput.files.length > 0) {
-                const allowed = ['.mp3', '.wav'];
-                const invalidFiles = Array.from(refInput.files).filter(
-                    file => !isValidExtension(file, allowed)
-                );
-
-                if (invalidFiles.length > 0) {
-                    refError.textContent = 'Недопустимые форматы файлов';
-                    refError.style.display = 'block';
-                    isValid = false;
-                }
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-                document.querySelector('.file-error[style*="display: block"]')?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
-        });
-    });
+    const BASE_PRICE = {{ service.min_price }};
 </script>
+<script src="{% static 'studio/js/instrumental.js' %}"></script>
 
 <style>
-    /* Стили для кнопки выбора файла */
     .file-upload-wrapper input[type="file"]::file-selector-button {
         background-color: #050505;
         color: #7b2cbf;
@@ -137,7 +51,6 @@
             border-color: #7b2cbf;
         }
 
-    /* Улучшенные стили чекбоксов */
     .checkbox-container {
         margin: 1.5rem 0;
     }
