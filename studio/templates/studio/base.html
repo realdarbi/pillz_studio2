@@ -1,7 +1,11 @@
 ﻿<html lang="ru">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
     <title>{% block title %}Pillz Studio | Студия звукозаписи{% endblock %}</title>
     {% load static %}
 
@@ -9,32 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'studio/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'studio/css/base.css' %}">
 
     {% block extra_css %}{% endblock %}
-
-    <style>
-        body {
-            background: var(--dark);
-            min-height: 100vh;
-        }
-
-        .pill-effect {
-            position: relative;
-            overflow: hidden;
-        }
-
-            .pill-effect::after {
-                content: '';
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: radial-gradient(ellipse at center, rgba(187, 134, 252, 0.05) 0%, transparent 70%);
-                z-index: -1;
-                pointer-events: none;
-            }
-    </style>
 </head>
 <body>
     <header class="header pill-effect">
@@ -96,7 +77,7 @@
                     <a href="https://t.me/pillzstudio"><i class="fab fa-telegram"></i></a>
                 </div>
             </div>
-            <p class="copyright">© {% now "Y" %} Студия звукозаписи. Все права защищены.</p>
+            <p class="copyright">plug.</p>
         </div>
     </footer>
 

@@ -3,27 +3,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'studio/css/auth.css' %}">
-<style>
-    .login-container {
-        min-height: calc(100vh - 120px);
-        display: flex;
-        align-items: center;
-    }
-
-    #login-card {
-        animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-</style>
 {% endblock %}
 
 {% block content %}

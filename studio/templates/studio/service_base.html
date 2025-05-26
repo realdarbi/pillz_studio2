@@ -6,7 +6,11 @@
 <link rel="stylesheet" href="{% static 'studio/css/service_form.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<div class="service-container" id="serviceContainer" data-base-price="{{ service.min_price }}" data-service-id="{{ service.id }}" data-user-id="{{ request.user.id }}">
+<div class="service-container" id="serviceContainer"
+     data-base-price="{{ service.min_price }}"
+     data-service-id="{{ service.id }}"
+     data-user-id="{{ request.user.id }}">
+
     {% cache 3600 service_header service.id %}
     <div class="service-header">
         <h1 class="service-title">{{ service.name }}</h1>
@@ -15,7 +19,7 @@
         <div class="price-info">
             <div class="price-tag">
                 <i class="fas fa-tag"></i>
-                <span>От {{ service.min_price }} ₽</span>
+                <span>От {{ service.min_price }} руб.</span>
             </div>
             <div class="duration-tag">
                 <i class="fas fa-clock"></i>
@@ -39,7 +43,8 @@
             <h3>Дополнительная информация</h3>
             <div class="param-group">
                 <label for="{{ form.comments.id_for_label }}" class="param-label">Комментарии</label>
-                <textarea id="id_comments" name="comments" class="param-control" rows="4" placeholder="Укажите любые дополнительные пожелания или требования"></textarea>
+                <textarea id="id_comments" name="comments" class="param-control" rows="4"
+                          placeholder="Ваши пожелания или требования"></textarea>
             </div>
         </div>
 
@@ -48,8 +53,8 @@
 
         <div class="price-display">
             <div>Итого к оплате:</div>
-            <div class="price-value"><span id="calculatedPrice">{{ service.min_price }}</span> ₽</div>
-            <div style="opacity: 0.7; font-size: 0.9rem;">Окончательная сумма может быть скорректирована</div>
+            <div class="price-value"><span id="calculatedPrice">{{ service.min_price }}</span> руб.</div>
+            <div class="price-note">Окончательная сумма может быть скорректирована</div>
         </div>
 
         <div class="form-actions">

@@ -1,0 +1,72 @@
+.services-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.service-card {
+    background: #1a1a1a;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid #00c2cb;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 194, 203, 0.3);
+    }
+
+.service-info {
+    flex: 1;
+}
+
+.service-name {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.service-price {
+    color: #00c2cb;
+    font-size: 16px;
+}
+
+.service-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-left: 20px;
+    border: 2px solid #7b2cbf;
+}
+
+.heading {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 32px;
+    position: relative;
+}
+
+    .heading:after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 3px;
+        background: #7b2cbf;
+        margin: 15px auto 0;
+    }
+
+.service-link {
+    display: block;
+    text-decoration: none;
+}
