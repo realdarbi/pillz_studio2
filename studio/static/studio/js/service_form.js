@@ -1,5 +1,4 @@
-﻿
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
     flatpickr(".datetime-input", {
         enableTime: true,
         dateFormat: "Y-m-d H:i",
@@ -33,8 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const form = document.getElementById('serviceForm');
     const clearBtn = document.getElementById('clearFormBtn');
+    const serviceContainer = document.getElementById('serviceContainer');
+    const serviceId = serviceContainer.dataset.serviceId; // Получаем ID услуги
+    const userId = serviceContainer.dataset.userId; 
+    const COOKIE_KEY = `service_form_data_${serviceId}_user_${userId}`; // Уникальный ключ для каждой формы
 
-    const savedData = Cookies.get('service_form_data');
+    // Восстановление данных из куки
+    const savedData = Cookies.get(COOKIE_KEY);
     if (savedData) {
         try {
             const data = JSON.parse(savedData);
@@ -58,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Сохранение данных в куки
     function saveFormData() {
         const formData = new FormData(form);
         const data = {};
@@ -74,16 +79,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        Cookies.set('service_form_data', JSON.stringify(data), { expires: 1 });
+        Cookies.set(COOKIE_KEY, JSON.stringify(data), { expires: 1 });
     }
 
     form.addEventListener('input', saveFormData);
     form.addEventListener('change', saveFormData);
 
+    // Очистка куки при отправке формы
+    form.addEventListener('submit', function () {
+        console.log('Removing cookie:', COOKIE_KEY);
+        Cookies.remove(COOKIE_KEY);
+    });
+
     clearBtn.addEventListener('click', function () {
         if (confirm('Вы уверены, что хотите очистить форму?')) {
             form.reset();
-            Cookies.remove('service_form_data');
+            Cookies.remove(COOKIE_KEY);
             document.querySelectorAll('.param-control').forEach(el => {
                 if (el.type !== 'checkbox' && el.type !== 'radio') {
                     el.value = '';
@@ -94,9 +105,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('input[type="file"]').forEach(fileInput => {
         fileInput.addEventListener('change', function () {
-            const data = JSON.parse(Cookies.get('service_form_data') || '{}');
+            const data = JSON.parse(Cookies.get(COOKIE_KEY) || '{}');
             data[this.name] = Array.from(this.files).map(f => f.name);
-            Cookies.set('service_form_data', JSON.stringify(data), { expires: 1 });
+            Cookies.set(COOKIE_KEY, JSON.stringify(data), { expires: 1 });
         });
     });
 
@@ -119,3 +130,6 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('change', calculatePrice);
     form.addEventListener('input', calculatePrice);
 });
+console.log('Service ID:', serviceId);
+console.log('Cookie key:', COOKIE_KEY);
+console.log('Saved data:', savedData);

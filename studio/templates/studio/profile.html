@@ -198,7 +198,10 @@
         flex-wrap: wrap;
         gap: 15px;
     }
-
+    .booking-status.in_progress {
+        background: rgba(23, 162, 184, 0.2);
+        color: #17a2b8;
+    }
         .section-header h2 {
             font-size: 1.8rem;
             margin: 0;
@@ -240,11 +243,14 @@
     }
 
     .booking-card {
+        display: flex;
+        flex-direction: column;
         background: #1a1a1a;
         border-radius: 12px;
         padding: 20px;
         transition: all 0.3s;
         border-left: 3px solid #444;
+        gap: 15px;
     }
 
         .booking-card:hover {
@@ -255,8 +261,8 @@
     .booking-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
+        align-items: flex-start;
+        margin-bottom: 5px;
     }
 
         .booking-header h3 {
@@ -281,11 +287,13 @@
             background: rgba(40, 167, 69, 0.2);
             color: #28a745;
         }
-
     .booking-details {
-        color: #bbb;
-        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex-grow: 1;
     }
+
 
         .booking-details p {
             margin: 5px 0;
@@ -295,9 +303,9 @@
         }
 
     .booking-notes {
+        color: #bbb;
         font-style: italic;
-        color: #888;
-        margin-top: 10px;
+        font-size: 0.9rem;
     }
 
     .btn-cancel {
@@ -455,17 +463,219 @@
             margin-top: 15px;
         }
     }
+    /* Добавьте эти стили в ваш CSS */
+    .booking-price-status {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 5px;
+    }
+
+    .booking-price {
+        font-weight: 600;
+        color: #00c2cb;
+        font-size: 1.1rem;
+    }
+
+    .detail-row {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+        .detail-row i {
+            color: #7b2cbf;
+            width: 16px;
+            text-align: center;
+        }
+
+    .detail-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .detail-content strong {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .detail-content span {
+            color: #ddd;
+            font-size: 0.95rem;
+        }
+
+    .deadline-approaching {
+        color: #ffc107 !important;
+        font-weight: 600;
+    }
+    .comments-row {
+        align-items: flex-start;
+    }
+        .comments-row i {
+            margin-top: 3px;
+        }
+    .booking-actions {
+        margin-top: 10px;
+    }
+
+    .btn-contact {
+        background: rgba(0, 194, 203, 0.2);
+        color: #00c2cb;
+        border: 1px solid #00c2cb;
+        padding: 5px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+        .btn-contact:hover {
+            background: rgba(0, 194, 203, 0.3);
+        }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .user-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+        background: rgba(0, 194, 203, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 3px solid #00c2cb;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #ddd;
+    }
+
+        .stat-item i {
+            color: #7b2cbf;
+            width: 20px;
+            text-align: center;
+        }
+
+    .user-contacts p {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 8px 0;
+    }
+
+    .user-contacts i {
+        color: #7b2cbf;
+        width: 20px;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .social-link {
+        color: #aaa;
+        font-size: 1.3rem;
+        transition: all 0.3s;
+    }
+
+        .social-link:hover {
+            color: #7b2cbf;
+            transform: translateY(-2px);
+        }
+
+    .user-bio {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #333;
+    }
+
+        .user-bio h4 {
+            color: #00c2cb;
+            margin-bottom: 10px;
+        }
+
+        .user-bio p {
+            color: #bbb;
+            line-height: 1.5;
+        }
+
 </style>
 
 <div class="profile-container">
     <div class="profile-header">
         <div class="profile-info">
             <h1>{{ user.username }}</h1>
-            <p class="profile-email">{{ user.email }}</p>
-            {% if user.profile.phone %}
-            <p class="profile-phone">Телефон: {{ user.profile.phone }}</p>
+
+            <div class="user-stats">
+                <div class="stat-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Дата регистрации: {{ user.date_joined|date:"d.m.Y" }}</span>
+                </div>
+
+                <div class="stat-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Записей: {{ bookings_count }}</span>
+                </div>
+
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Завершено: {{ completed_orders_count }}</span>
+                </div>
+
+                <div class="stat-item">
+                    <i class="fas fa-star"></i>
+                    <span>
+                        Рейтинг:
+                        {% if user.profile.rating %}
+                        {{ user.profile.rating }}/5
+                        {% else %}
+                        пока нет оценок
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="user-contacts">
+                <p class="profile-email">
+                    <i class="fas fa-envelope"></i> {{ user.email }}
+                </p>
+                {% if user.profile.phone %}
+                <p class="profile-phone">
+                    <i class="fas fa-phone"></i> {{ user.profile.phone }}
+                </p>
+                {% endif %}
+
+                {% if user.profile.social_links %}
+                <div class="social-links">
+                    {% for name, url in user.profile.social_links.items %}
+                    <a href="{{ url }}" target="_blank" class="social-link">
+                        <i class="fab fa-{{ name }}"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            {% if user.profile.bio %}
+            <div class="user-bio">
+                <h4>О себе:</h4>
+                <p>{{ user.profile.bio }}</p>
+            </div>
             {% endif %}
         </div>
+
 
         <div class="avatar-section">
             <div class="avatar-wrapper">
@@ -496,6 +706,7 @@
                 <div class="section-actions">
                     <button class="btn-filter active" data-filter="all">Все</button>
                     <button class="btn-filter" data-filter="pending">Ожидают</button>
+                    <button class="btn-filter" data-filter="in_progress">В работе</button>
                     <button class="btn-filter" data-filter="confirmed">Подтверждены</button>
                 </div>
             </div>
@@ -506,24 +717,57 @@
                 <div class="booking-card" data-status="{{ booking.status }}">
                     <div class="booking-header">
                         <h3>{{ booking.service_type.name }}</h3>
-                        <span class="booking-status {{ booking.status }}">
-                            {{ booking.get_status_display }}
-                        </span>
+                        <div class="booking-price-status">
+                            <span class="booking-price">{{ booking.price }} руб.</span>
+                            <span class="booking-status {{ booking.status }}">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="booking-details">
-                        <p><i class="far fa-calendar-alt"></i> {{ booking.date_ordered|date:"d.m.Y H:i" }}</p>
+                        <div class="detail-row">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>{{ booking.date_ordered|date:"d.m.Y H:i" }}</span>
+                        </div>
+
                         {% if booking.deadline %}
-                        <p><i class="fas fa-clock"></i> Срок: {{ booking.deadline|date:"d.m.Y H:i" }}</p>
+                        <div class="detail-row">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <span class="{% if booking.is_deadline_approaching %}deadline-approaching{% endif %}">
+                                    До {{ booking.deadline|date:"d.m.Y H:i" }}
+                                </span>
+                                {% if booking.is_deadline_approaching %}
+                                <div class="time-left">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Осталось: {{ booking.time_until_deadline }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
                         {% endif %}
+
+                        {% if booking.duration %}
+                        <div class="detail-row">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span>Длительность: {{ booking.duration }} ч.</span>
+                        </div>
+                        {% endif %}
+
                         {% if booking.comments %}
-                        <p class="booking-notes">{{ booking.comments }}</p>
+                        <div class="detail-row comments-row">
+                            <i class="fas fa-comment"></i>
+                            <span class="booking-notes">{{ booking.comments }}</span>
+                        </div>
                         {% endif %}
                     </div>
 
                     <div class="booking-actions">
                         {% if booking.status == 'pending' %}
-                        <button class="btn-cancel" data-booking-id="{{ booking.id }}">Отменить запись</button>
+                        <button class="btn-cancel" data-booking-id="{{ booking.id }}">
+                            <i class="fas fa-times"></i> Отменить запись
+                        </button>
                         {% endif %}
                     </div>
                 </div>
@@ -594,4 +838,5 @@
         </section>
     </div>
 </div>
+<script src="{% static 'studio/js/profile.js' %}"></script>
 {% endblock %}

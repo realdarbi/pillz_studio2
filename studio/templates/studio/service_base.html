@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'studio/css/service_form.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<div class="service-container" id="serviceContainer" data-base-price="{{ service.min_price }}">
+<div class="service-container" id="serviceContainer" data-base-price="{{ service.min_price }}" data-service-id="{{ service.id }}" data-user-id="{{ request.user.id }}">
     {% cache 3600 service_header service.id %}
     <div class="service-header">
         <h1 class="service-title">{{ service.name }}</h1>

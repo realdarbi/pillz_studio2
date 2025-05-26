@@ -2,26 +2,37 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterButtons = document.querySelectorAll('.btn-filter');
     const bookingCards = document.querySelectorAll('.booking-card');
 
+    // Функция фильтрации карточек
+    function filterCards(filter) {
+        bookingCards.forEach(card => {
+            const cardStatus = card.dataset.status;
+
+            if (filter === 'all' || cardStatus === filter) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Обработчики для кнопок фильтра
     filterButtons.forEach(button => {
         button.addEventListener('click', function () {
+            // Удаляем активный класс у всех кнопок
             filterButtons.forEach(btn => btn.classList.remove('active'));
 
+            // Добавляем активный класс текущей кнопке
             this.classList.add('active');
 
-            const filter = this.dataset.filter;
-
-            bookingCards.forEach(card => {
-                const cardStatus = card.dataset.status;
-
-                if (filter === 'all' || cardStatus === filter) {
-                    card.removeAttribute('hidden');
-                } else {
-                    card.setAttribute('hidden', 'true');
-                }
-            });
+            // Применяем фильтр
+            filterCards(this.dataset.filter);
         });
     });
 
+    // Инициализация - показываем все карточки
+    filterCards('all');
+
+    // Остальной ваш код (отмена бронирования и т.д.)
     document.querySelectorAll('.btn-cancel').forEach(button => {
         button.addEventListener('click', async function () {
             const bookingId = this.dataset.bookingId;

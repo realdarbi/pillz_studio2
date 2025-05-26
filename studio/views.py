@@ -15,6 +15,8 @@ import logging
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.db.models import Q
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_protect
+from django.utils.deprecation import MiddlewareMixin
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +92,7 @@ class CustomLoginView(LoginView):
             return redirect_to
         return super().get_success_url()
 @require_http_methods(["GET", "POST"])
+@csrf_protect
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -158,7 +161,7 @@ from .models import (
     InstrumentalServiceParams, LyricsServiceParams,
     FullSongServiceParams
 )
-
+@csrf_protect
 @login_required
 def service_detail(request, pk):
     service_type = get_object_or_404(ServiceType, pk=pk)
@@ -224,33 +227,35 @@ def service_detail(request, pk):
     }
     
     return render(request, f'studio/service_{service_type.category}.html', context)
-
-@login_required
 @login_required
 def profile(request):
-    if request.method == 'POST' and 'avatar' in request.FILES:
-        profile, created = Profile.objects.get_or_create(user=request.user)
-        profile.avatar = request.FILES['avatar']
-        profile.save()
-        messages.success(request, 'Аватар успешно обновлен!')
-        return redirect('profile')
+    # Получаем профиль
+    profile = Profile.objects.get(user=request.user)
     
+    # Активные заказы с отзывами
     active_bookings = Service.objects.filter(
         client=request.user
     ).exclude(
         Q(status='completed') | Q(status='canceled')
-    ).order_by('-date_ordered')
+    ).select_related('service_type').prefetch_related('service_reviews').order_by('-date_ordered')
     
+    # Завершенные заказы
     completed_orders = Service.objects.filter(
         client=request.user,
         status='completed'
-    ).order_by('-date_completed')
+    ).select_related('service_type').prefetch_related('service_reviews').order_by('-date_completed')
     
-    return render(request, 'studio/profile.html', {
+    context = {
         'user': request.user,
+        'profile': profile,
         'active_bookings': active_bookings,
-        'completed_orders': completed_orders
-    })
+        'completed_orders': completed_orders,
+        'bookings_count': active_bookings.count(),
+        'completed_orders_count': completed_orders.count()
+    }
+    
+    return render(request, 'studio/profile.html', context)
+@csrf_protect
 @login_required
 @require_POST
 def cancel_order(request, order_id):
@@ -281,7 +286,7 @@ def cancel_order(request, order_id):
         
         messages.error(request, error_msg)
         return redirect('profile')
-
+@csrf_protect
 def home(request):
     CATEGORY_ORDER = ['recording', 'mixing', 'instrumental', 'lyrics', 'full_song']
     
@@ -295,7 +300,7 @@ def home(request):
         'title': 'Главная',
         'heading': 'Популярные услуги'
     })
-
+@csrf_protect
 def services_list(request):
     
     services = ServiceType.objects.filter(is_active=True)
