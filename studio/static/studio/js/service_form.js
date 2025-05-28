@@ -33,11 +33,10 @@
     const form = document.getElementById('serviceForm');
     const clearBtn = document.getElementById('clearFormBtn');
     const serviceContainer = document.getElementById('serviceContainer');
-    const serviceId = serviceContainer.dataset.serviceId; // Получаем ID услуги
+    const serviceId = serviceContainer.dataset.serviceId; 
     const userId = serviceContainer.dataset.userId; 
-    const COOKIE_KEY = `service_form_data_${serviceId}_user_${userId}`; // Уникальный ключ для каждой формы
+    const COOKIE_KEY = `service_form_data_${serviceId}_user_${userId}`; 
 
-    // Восстановление данных из куки
     const savedData = Cookies.get(COOKIE_KEY);
     if (savedData) {
         try {
@@ -62,7 +61,6 @@
         }
     }
 
-    // Сохранение данных в куки
     function saveFormData() {
         const formData = new FormData(form);
         const data = {};
@@ -85,7 +83,6 @@
     form.addEventListener('input', saveFormData);
     form.addEventListener('change', saveFormData);
 
-    // Очистка куки при отправке формы
     form.addEventListener('submit', function () {
         console.log('Removing cookie:', COOKIE_KEY);
         Cookies.remove(COOKIE_KEY);
@@ -115,7 +112,6 @@
         const serviceContainer = document.getElementById('serviceContainer');
         if (!serviceContainer) return;
 
-        // Сохраняем базовую цену в data-атрибуте
         const basePrice = parseFloat("{{ service.min_price }}");
         if (!isNaN(basePrice)) {
             serviceContainer.dataset.basePrice = basePrice;
@@ -125,7 +121,6 @@
         }
     }
 
-    // Инициализация расчета цены
     initBasePrice();
     form.addEventListener('change', calculatePrice);
     form.addEventListener('input', calculatePrice);

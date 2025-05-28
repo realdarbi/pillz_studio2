@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Установка минимальной даты для выбора
     const dateInput = document.getElementById('id_date');
     if (dateInput) {
         const today = new Date();
@@ -9,11 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
         dateInput.min = `${yyyy}-${mm}-${dd}`;
     }
 
-    // Обработка отправки формы
     const bookingForm = document.getElementById('booking-form');
     if (bookingForm) {
         bookingForm.addEventListener('submit', function (e) {
-            // Можно добавить дополнительную валидацию перед отправкой
             console.log('Форма бронирования отправлена');
         });
     }

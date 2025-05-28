@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth.views import LoginView
 from django.views.decorators.http import require_http_methods
-from .models import ServiceType, Portfolio, Service, Booking, Profile
+from .models import ServiceType, Portfolio, Service, Booking, Profile, Review
 from .forms import RegisterForm, BookingForm
 import logging
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -17,6 +17,10 @@ from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
 from django.utils.deprecation import MiddlewareMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,24 +62,20 @@ class CustomLoginView(LoginView):
             return JsonResponse({
                 'success': True,
                 'redirect_url': self.get_success_url(), 
-                'user_authenticated': True  
+                'user_authenticated': True,
+                'message': 'Вы успешно вошли в систему'
             }, content_type='application/json; charset=utf-8')
         return super().form_valid(form)
     
     def form_invalid(self, form):
         """Обработка неудачной авторизации"""
+        error_message = 'Неверный логин или пароль'
         if is_ajax(self.request):
             try:
-                html = render_to_string(
-                    'studio/login_form.html', 
-                    {'form': form, 'is_ajax': True}, 
-                    request=self.request,
-                    using='django'
-                )
                 return JsonResponse({
                     'success': False,
-                    'html': html,
-                    'errors': form.errors.get_json_data() 
+                    'error': error_message, 
+                    'errors': form.errors.get_json_data()
                 }, status=400, content_type='application/json; charset=utf-8')
             except Exception as e:
                 logger.error(f"Error rendering invalid login form: {str(e)}")
@@ -83,6 +83,8 @@ class CustomLoginView(LoginView):
                     'success': False,
                     'error': 'Ошибка формы'
                 }, status=500, content_type='application/json; charset=utf-8')
+        
+        messages.error(self.request, error_message)
         return super().form_invalid(form)
     
     def get_success_url(self):
@@ -93,12 +95,14 @@ class CustomLoginView(LoginView):
         return super().get_success_url()
 @require_http_methods(["GET", "POST"])
 @csrf_protect
+
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             try:
                 user = form.save()
+                Profile.objects.create(user=user)
                 login(request, user)
                 
                 if is_ajax(request):
@@ -229,17 +233,29 @@ def service_detail(request, pk):
     return render(request, f'studio/service_{service_type.category}.html', context)
 @login_required
 def profile(request):
-    # Получаем профиль
-    profile = Profile.objects.get(user=request.user)
+    profile, created = Profile.objects.get_or_create(user=request.user)
     
-    # Активные заказы с отзывами
+    if request.method == 'POST' and 'avatar' in request.FILES:
+        try:
+            if profile.avatar:
+                profile.avatar.delete()
+            
+            profile.avatar = request.FILES['avatar']
+            profile.save()
+            
+            messages.success(request, 'Аватар успешно обновлен!')
+            return redirect('profile')
+            
+        except Exception as e:
+            logger.error(f"Error updating avatar: {str(e)}")
+            messages.error(request, f'Ошибка при обновлении аватара: {str(e)}')
+    
     active_bookings = Service.objects.filter(
         client=request.user
     ).exclude(
         Q(status='completed') | Q(status='canceled')
     ).select_related('service_type').prefetch_related('service_reviews').order_by('-date_ordered')
     
-    # Завершенные заказы
     completed_orders = Service.objects.filter(
         client=request.user,
         status='completed'
@@ -309,3 +325,38 @@ def services_list(request):
         'title': 'Все услуги',
         'heading': 'Полный список услуг'
     })
+
+@login_required
+@require_POST
+def delete_account(request):
+    try:
+        user = request.user
+        
+        Service.objects.filter(client=user).delete()
+        Booking.objects.filter(client=user).delete()
+        Review.objects.filter(author=user).delete()
+        Profile.objects.filter(user=user).delete()
+        user.delete()
+        
+        logout(request)
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'success', 
+                'message': 'Ваш аккаунт и все связанные данные были успешно удалены.',
+                'redirect_url': reverse('home')
+            })
+        
+        messages.success(request, 'Ваш аккаунт и все связанные данные были успешно удалены.')
+        return redirect('home')
+    
+    except Exception as e:
+        logger.error(f"Error deleting user account: {str(e)}")
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Произошла ошибка при удалении аккаунта.'
+            }, status=400)
+        
+        messages.error(request, 'Произошла ошибка при удалении аккаунта.')
+        return redirect('profile')

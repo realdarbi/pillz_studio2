@@ -286,3 +286,39 @@
     .field-error i {
         font-size: 14px;
     }
+
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    transform: translateX(150%);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .notification.error {
+        background-color: #ff4d4f;
+        border-left: 4px solid #ff1a1d;
+    }
+
+    .notification.success {
+        background-color: #52c41a;
+        border-left: 4px solid #389e0d;
+    }
+
+    .notification i {
+        font-size: 18px;
+    }

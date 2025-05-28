@@ -32,6 +32,6 @@ function initFooter() {
     const yearElement = document.querySelector('.copyright');
     if (yearElement) {
         const currentYear = new Date().getFullYear();
-        yearElement.textContent = `© ${currentYear} Студия звукозаписи. Все права защищены.`;
+        yearElement.textContent = ` Студия звукозаписи. Все права защищены.`;
     }
 }

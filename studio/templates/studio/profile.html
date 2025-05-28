@@ -1,4 +1,5 @@
-﻿{% extends 'studio/base.html' %}
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% extends 'studio/base.html' %}
 {% load static %}
 
 {% block extra_css %}
@@ -68,6 +69,11 @@
                 <p>{{ user.profile.bio }}</p>
             </div>
             {% endif %}
+            <div class="profile-actions">
+                <button id="delete-account-btn" class="btn-danger">
+                    <i class="fas fa-trash-alt"></i> Удалить аккаунт
+                </button>
+            </div>
         </div>
 
 
@@ -85,7 +91,7 @@
                 {% csrf_token %}
                 <label for="avatar-upload" class="file-upload-label">
                     <span>Выбрать новый аватар</span>
-                    <input type="file" id="avatar-upload" name="avatar" accept="media/*">
+                    <input type="file" id="avatar-upload" name="avatar" accept="image/*">
                 </label>
                 <span class="file-name">Файл не выбран</span>
                 <button type="submit" class="btn-primary">Обновить</button>
@@ -176,7 +182,23 @@
             {% endif %}
         </section>
 
-        <section class="services-section">
+        
+
+
+
+    <div id="delete-confirm-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Подтвердите удаление аккаунта</h3>
+            <p>Вы уверены, что хотите удалить свой аккаунт? Это действие невозможно отменить. Все ваши данные будут безвозвратно удалены.</p>
+            <div class="modal-actions">
+                <button id="cancel-delete" class="btn-secondary">Отмена</button>
+                <button id="confirm-delete" class="btn-danger">Да, удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-slider">
+        <div class="history-slider-content">
             <h2>История заказов</h2>
             {% if completed_orders %}
             <div class="services-list">
@@ -229,8 +251,9 @@
                 <a href="{% url 'services' %}" class="btn-primary">Посмотреть услуги</a>
             </div>
             {% endif %}
-        </section>
+        </div>
     </div>
+
 </div>
 <script src="{% static 'studio/js/profile.js' %}"></script>
 {% endblock %}

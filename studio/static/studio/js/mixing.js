@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
     deadlineInput?.addEventListener('change', function () {
         const selectedDate = new Date(this.value);
         const now = new Date();
-        const minDeadline = new Date(now.getTime() + 12 * 60 * 60 * 1000); // +12 часов
+        const minDeadline = new Date(now.getTime() + 12 * 60 * 60 * 1000); 
 
         if (selectedDate < minDeadline) {
             alert('ћинимальный срок выполнени€ - 12 часов');

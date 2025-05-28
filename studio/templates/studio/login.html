@@ -1,4 +1,5 @@
-﻿{% extends 'studio/base.html' %}
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% extends 'studio/base.html' %}
 {% load static %}
 
 {% block extra_css %}
@@ -12,6 +13,11 @@
          data-register-url="{% url 'register' %}"
          data-home-url="{% url 'home' %}">
         <div class="login-card" id="login-card">
+            <div id="auth-notification" class="auth-notification hidden">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="notification-message"></span>
+            </div>
+
             <div class="login-header">
                 <img src="{% static 'studio/images/logo.png' %}" alt="Логотип" class="login-logo">
                 <h1 align="center">Вход</h1>

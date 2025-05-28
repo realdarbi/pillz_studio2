@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Инициализация элементов
     const elements = {
         priceDisplay: document.getElementById('calculatedPrice'),
         slider: document.getElementById('hoursSlider'),
@@ -12,10 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const serviceContainer = document.getElementById('serviceContainer');
     if (!serviceContainer) return;
 
-    // Инициализация цены
 
 
-    // Функции обновления
     function updateSliderUI(value) {
         elements.valueDisplay.textContent = value;
         elements.hiddenInput.value = value;
@@ -28,13 +25,11 @@ document.addEventListener('DOMContentLoaded', function () {
         const hours = Number(elements.hiddenInput.value) || 1;
         const unknown = elements.unknownCheckbox.checked;
 
-        if (unknown) return pricing.basePrice; // если время неизвестно, берем базовую цену
+        if (unknown) return pricing.basePrice; 
 
         if (hours < 3) {
-            // Для 1-2 часов - обычная цена
             return pricing.basePrice * hours;
         } else {
-            // Для 3+ часов - специальная цена
             return pricing.additionalHour * hours;
         }
     }
@@ -46,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
         serviceContainer.dataset.currentPrice = price;
     }
 
-    // Обработчики событий
     elements.slider?.addEventListener('input', function () {
         updateSliderUI(this.value);
         updatePriceDisplay();
@@ -60,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePriceDisplay();
     });
 
-    // Инициализация
     if (elements.slider) {
         updateSliderUI(elements.slider.value);
         updatePriceDisplay();

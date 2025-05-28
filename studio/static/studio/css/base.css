@@ -19,3 +19,24 @@ body {
         z-index: -1;
         pointer-events: none;
     }
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-direction: row;
+}
+
+.logout-form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+}

@@ -11,7 +11,7 @@
 
     {% for service in services %}
     <a href="{% url 'service_detail' service.pk %}" class="service-link">
-        <div class="service-card" data-service-id="{{ service.pk }}">
+        <div class="service-card" date-service-id="{{ service.pk }}">
             <div class="service-info">
                 <h3 class="service-name">{{ service.name }}</h3>
                 <p class="service-price">от {{ service.min_price }} ₽</p>
@@ -23,6 +23,8 @@
     </a>
     {% endfor %}
 </div>
+
+<button id="backToTopBtn" title="Наверх">↑</button>
 {% endblock %}
 
 {% block extra_js %}

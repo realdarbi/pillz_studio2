@@ -16,6 +16,8 @@ urlpatterns = [
     path('service/<int:pk>/', views.service_detail, name='service_detail'),
     path('cancel_order/<int:order_id>/', views.cancel_order, name='cancel_order'),
 
+    path('delete_account/', login_required(views.delete_account), name='delete_account'),
+
 
 ]
 

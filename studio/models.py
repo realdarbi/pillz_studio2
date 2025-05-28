@@ -1,6 +1,11 @@
 # coding=windows-1251
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import os
+from django.db.models.signals import post_save
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -125,3 +130,37 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Отзыв от {self.author.username}"
+
+
+@receiver(post_delete, sender=Profile)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Удаляет файлы при удалении объекта модели
+    """
+    if instance.avatar and os.path.isfile(instance.avatar.path):
+        os.remove(instance.avatar.path)
+
+@receiver(post_delete, sender=RecordingServiceParams)
+@receiver(post_delete, sender=MixingServiceParams)
+@receiver(post_delete, sender=InstrumentalServiceParams)
+@receiver(post_delete, sender=LyricsServiceParams)
+@receiver(post_delete, sender=FullSongServiceParams)
+def auto_delete_files_on_delete(sender, instance, **kwargs):
+    """
+    Удаляет связанные файлы при удалении параметров услуги
+    """
+    fields = ['zip_file', 'references']
+    for field in fields:
+        if hasattr(instance, field):
+            file = getattr(instance, field)
+            if file and os.path.isfile(file.path):
+                os.remove(file.path)
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

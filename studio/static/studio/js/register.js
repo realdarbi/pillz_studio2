@@ -1,15 +1,15 @@
-$(document).ready(function() {
+$(document).ready(function () {
     $('#register-card').hide().fadeIn(500);
 
     const initInputHandlers = () => {
         $('input').on({
-            focus: function() {
+            focus: function () {
                 $(this).parent().find('label').css('color', 'var(--secondary)');
             },
-            blur: function() {
+            blur: function () {
                 $(this).parent().find('label').css('color', 'var(--text)');
             },
-            input: function() {
+            input: function () {
                 $(this).removeClass('error-field');
                 $(this).parent().removeClass('has-error');
                 $(this).next('.field-error').hide();
@@ -19,7 +19,7 @@ $(document).ready(function() {
 
     initInputHandlers();
 
-    $('#register-form').on('submit', function(e) {
+    $('#register-form').on('submit', function (e) {
         e.preventDefault();
         const $form = $(this);
         const $btn = $form.find('.submit-btn');
@@ -38,9 +38,13 @@ $(document).ready(function() {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
             },
-            success: function(response) {
+            success: function (response) {
                 if (response.success) {
-                    window.location.href = response.redirect_url || "/";
+                    if (response.redirect_url) {
+                        window.location.href = response.redirect_url;
+                    } else {
+                        window.location.href = '/';
+                    }
                 } else if (response.html) {
                     $('#auth-container').html(response.html);
                     initInputHandlers();
@@ -48,13 +52,13 @@ $(document).ready(function() {
                     handleFormErrors(response.errors);
                 }
             },
-            error: function(xhr) {
-                const errorMsg = xhr.responseJSON?.error || 
-                               xhr.responseJSON?.message || 
-                               'Произошла ошибка. Пожалуйста, попробуйте позже.';
+            error: function (xhr) {
+                const errorMsg = xhr.responseJSON?.error ||
+                    xhr.responseJSON?.message ||
+                    'Произошла ошибка. Пожалуйста, попробуйте позже.';
                 showToast(errorMsg, 'error');
             },
-            complete: function() {
+            complete: function () {
                 $btnText.show();
                 $spinner.hide();
                 $btn.prop('disabled', false);
