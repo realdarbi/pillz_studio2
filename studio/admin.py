@@ -16,7 +16,6 @@ from .models import (
 )
 from django.db import models
 from django.utils import timezone
-# ====================== КАСТОМНЫЕ АДМИН-ДЕЙСТВИЯ ======================
 
 def export_to_csv(modeladmin, request, queryset):
     """Экспорт выбранных записей в CSV"""
@@ -26,11 +25,9 @@ def export_to_csv(modeladmin, request, queryset):
     
     writer = csv.writer(response)
     
-    # Заголовки
     headers = [field.name for field in model._meta.fields]
     writer.writerow(headers)
     
-    # Данные
     for obj in queryset:
         row = [getattr(obj, field) for field in headers]
         writer.writerow(row)
@@ -43,7 +40,6 @@ def mark_as_confirmed(modeladmin, request, queryset):
     queryset.update(status='confirmed', date_confirmed=datetime.now())
 mark_as_confirmed.short_description = "Подтвердить выбранные"
 
-# ====================== КАСТОМНЫЕ ФИЛЬТРЫ ======================
 
 class ServiceStatusFilter(admin.SimpleListFilter):
     """Фильтр для статусов услуг с группировкой"""
@@ -65,7 +61,6 @@ class ServiceStatusFilter(admin.SimpleListFilter):
         if self.value() == 'pending':
             return queryset.filter(status='pending')
 
-# ====================== КАСТОМНЫЕ ModelAdmin КЛАССЫ ======================
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -135,7 +130,6 @@ class ServiceAdmin(admin.ModelAdmin):
         return format_html(' | '.join(links)) if links else "-"
     service_details_link.short_description = "Детали услуги"
 
-# Параметры услуг (общий стиль)
 class ServiceParamsAdmin(admin.ModelAdmin):
     list_display = ('service', 'deadline', 'is_overdue')
     date_hierarchy = 'deadline'
@@ -145,7 +139,6 @@ class ServiceParamsAdmin(admin.ModelAdmin):
         if obj.deadline:
             now = timezone.now()
             if timezone.is_naive(obj.deadline):
-                # Если deadline naive, делаем его aware (предполагая UTC)
                 deadline = timezone.make_aware(obj.deadline)
             else:
                 deadline = obj.deadline
@@ -164,7 +157,6 @@ class RecordingServiceParamsAdmin(admin.ModelAdmin):
         if obj.datetime:
             now = timezone.now()
             if timezone.is_naive(obj.datetime):
-                # Если datetime naive, делаем его aware (предполагая UTC)
                 datetime_aware = timezone.make_aware(obj.datetime)
             else:
                 datetime_aware = obj.datetime
@@ -189,7 +181,6 @@ class BookingAdmin(admin.ModelAdmin):
         return "Прошло"
     time_until_booking.short_description = "До записи"
 
-# ====================== КАСТОМНАЯ АДМИН-ПАНЕЛЬ С ДАШБОРДОМ ======================
 
 class StudioAdminSite(AdminSite):
     site_header = "Панель управления студией"
@@ -205,14 +196,12 @@ class StudioAdminSite(AdminSite):
         return custom_urls + urls
 
     def studio_stats(self, request):
-        # Статистика услуг
         services_stats = (
             Service.objects.values('service_type__name', 'status')
             .annotate(count=Count('id'), total=Sum('price'))
             .order_by('service_type__name')
         )
 
-        # Последние 5 заказов
         recent_orders = Service.objects.select_related('client', 'service_type').order_by('-date_ordered')[:5]
 
         context = {
@@ -260,10 +249,8 @@ class ReviewAdmin(admin.ModelAdmin):
     short_text.short_description = "Текст отзыва"
 
 
-# Регистрация кастомной админки
 studio_admin = StudioAdminSite(name='studio_admin')
 
-# Перерегистрация всех моделей
 studio_admin.register(Profile, ProfileAdmin)
 studio_admin.register(ServiceType, ServiceTypeAdmin)
 studio_admin.register(Service, ServiceAdmin)

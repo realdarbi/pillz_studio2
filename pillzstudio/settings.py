@@ -33,8 +33,8 @@ FILE_CHARSET = 'utf-8'
 
 INSTALLED_APPS = [
     'admin_interface',
-    'colorfield',  # Должен быть сразу после admin_interface
-    'django.contrib.admin',  # Только один раз!
+    'colorfield',  
+    'django.contrib.admin',  
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'studio',
 ]
-X_FRAME_OPTIONS = 'SAMEORIGIN'  # Для виджетов
+X_FRAME_OPTIONS = 'SAMEORIGIN'  
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -141,7 +141,7 @@ CACHES = {
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_AGE = 3600  # 1 час
+SESSION_COOKIE_AGE = 3600  
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 

@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function () {
     function getCookie(name) {
         let cookieValue = null;
@@ -27,6 +26,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3000);
     }
 
+    function showPreloader() {
+        const preloader = document.createElement('div');
+        preloader.className = 'preloader';
+        preloader.innerHTML = '<div class="spinner"></div><p>Загрузка...</p>';
+        document.body.appendChild(preloader);
+        return preloader;
+    }
+
+    function hidePreloader(preloader) {
+        if (preloader) {
+            preloader.remove();
+        }
+    }
+
     const filterButtons = document.querySelectorAll('.btn-filter');
     const bookingCards = document.querySelectorAll('.booking-card');
 
@@ -50,20 +63,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     filterCards('all');
-
-    function showPreloader() {
-        const preloader = document.createElement('div');
-        preloader.className = 'preloader';
-        preloader.innerHTML = '<div class="spinner"></div><p>Загрузка...</p>';
-        document.body.appendChild(preloader);
-        return preloader;
-    }
-
-    function hidePreloader(preloader) {
-        if (preloader) {
-            preloader.remove();
-        }
-    }
 
     document.querySelectorAll('.btn-cancel').forEach(button => {
         button.addEventListener('click', function () {
@@ -105,7 +104,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         hidePreloader(preloader);
                     });
             }
-
         });
     });
 
@@ -188,14 +186,13 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-});
-document.addEventListener('DOMContentLoaded', function () {
+
     const historySlider = document.querySelector('.history-slider');
     let sliderTimeout;
 
     if (historySlider) {
         document.addEventListener('click', function (e) {
-            if (!historySlider.contains(e.target) {
+            if (!historySlider.contains(e.target)) {
                 historySlider.style.right = '-25%';
             }
         });
@@ -222,4 +219,79 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 500);
         });
     }
+
+    const changeUsernameBtn = document.getElementById('change-username-btn');
+    const changeUsernameModal = document.getElementById('change-username-modal');
+    const cancelChangeUsername = document.getElementById('cancel-change-username');
+    const changeUsernameForm = document.getElementById('change-username-form');
+
+    if (changeUsernameBtn && changeUsernameModal) {
+        changeUsernameBtn.addEventListener('click', () => {
+            changeUsernameModal.style.display = 'flex';
+        });
+
+        cancelChangeUsername.addEventListener('click', () => {
+            changeUsernameModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === changeUsernameModal) {
+                changeUsernameModal.style.display = 'none';
+            }
+        });
+    }
+
+    if (changeUsernameForm) {
+        changeUsernameForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const preloader = showPreloader();
+
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showNotification(data.message, 'success');
+                        document.querySelector('.profile-info h1').textContent = data.new_username;
+                        changeUsernameModal.style.display = 'none';
+                    } else {
+                        if (data.errors) {
+                            for (const field in data.errors) {
+                                const errorElement = document.getElementById(`${field}-error`);
+                                if (errorElement) {
+                                    errorElement.textContent = data.errors[field][0].message;
+                                }
+                            }
+                        } else {
+                            showNotification(data.message || 'Ошибка при изменении логина', 'error');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Произошла ошибка при отправке запроса', 'error');
+                })
+                .finally(() => {
+                    hidePreloader(preloader);
+                });
+        });
+    }
+
+    const formInputs = document.querySelectorAll('#change-username-form input');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function () {
+            const errorElement = document.getElementById(`${this.name}-error`);
+            if (errorElement) {
+                errorElement.textContent = '';
+            }
+        });
+    });
 });

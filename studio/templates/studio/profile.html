@@ -73,6 +73,35 @@
                 <button id="delete-account-btn" class="btn-danger">
                     <i class="fas fa-trash-alt"></i> Удалить аккаунт
                 </button>
+                <div class="profile-actions">
+                    <button id="change-username-btn" class="btn-primary">
+                        <i class="fas fa-user-edit"></i> Изменить логин
+                    </button>
+                    
+                </div>
+
+                <div id="change-username-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <h3>Изменение логина</h3>
+                        <form id="change-username-form" method="post" action="{% url 'change_username' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="new-username">Новый логин</label>
+                                <input type="text" id="new-username" name="new_username" required>
+                                <div class="error-message" id="username-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="current-password">Текущий пароль</label>
+                                <input type="password" id="current-password" name="current_password" required>
+                                <div class="error-message" id="password-error"></div>
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" id="cancel-change-username" class="btn-secondary">Отмена</button>
+                                <button type="submit" class="btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
 

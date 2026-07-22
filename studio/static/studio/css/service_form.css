@@ -205,7 +205,6 @@
         opacity: 0.9;
     }
 
-/* Flatpickr стили */
 .flatpickr-calendar {
     background: var(--darkest) !important;
     border: 1px solid var(--border) !important;
@@ -280,7 +279,6 @@
     background: var(--darkest) !important;
 }
 
-/* —лайдер */
 .slider-container {
     margin-bottom: 1.5rem;
 }
@@ -334,7 +332,6 @@
     color: var(--text-light);
 }
 
-/* Select элементы */
 select.param-control {
     appearance: none;
     -webkit-appearance: none;
@@ -364,7 +361,6 @@ select.param-control {
         color: black !important;
     }
 
-/*  нопки формы */
 .form-actions {
     display: flex;
     gap: 15px;

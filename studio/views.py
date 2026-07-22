@@ -19,6 +19,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.deprecation import MiddlewareMixin
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from .forms import ChangeUsernameForm
 
 
 
@@ -360,3 +361,42 @@ def delete_account(request):
         
         messages.error(request, 'Произошла ошибка при удалении аккаунта.')
         return redirect('profile')
+
+@login_required
+@require_POST
+def change_username(request):
+    form = ChangeUsernameForm(request.user, request.POST)
+    
+    if form.is_valid():
+        try:
+            new_username = form.cleaned_data['new_username']
+            user = request.user
+            
+            user.username = new_username
+            user.save()
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Логин успешно изменен!',
+                    'new_username': new_username
+                })
+            
+            messages.success(request, 'Логин успешно изменен!')
+            return redirect('profile')
+        
+        except Exception as e:
+            logger.error(f"Error changing username: {str(e)}")
+            error_msg = f"Ошибка при изменении логина: {str(e)}"
+    else:
+        error_msg = "Пожалуйста, исправьте ошибки в форме."
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'status': 'error',
+            'message': error_msg,
+            'errors': form.errors.get_json_data()
+        }, status=400)
+    
+    messages.error(request, error_msg)
+    return redirect('profile')

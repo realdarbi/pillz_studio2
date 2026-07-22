@@ -4,6 +4,7 @@ from django.urls import path, include
 from . import views
 from django.contrib.auth.decorators import login_required
 from .views import CustomLoginView
+from .views import change_username
 
 urlpatterns = [
     path('', views.home, name='home'),                     
@@ -18,6 +19,6 @@ urlpatterns = [
 
     path('delete_account/', login_required(views.delete_account), name='delete_account'),
 
-
+    path('change_username/', change_username, name='change_username'),
 ]
 

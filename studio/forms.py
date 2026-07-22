@@ -8,6 +8,9 @@ from .models import (
 )
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import DateInput, DateTimeInput
+from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
+from django.contrib.auth import password_validation
 
 class BookingForm(forms.ModelForm):
     class Meta:
@@ -94,3 +97,28 @@ class CreateServiceForm(forms.ModelForm):
         widgets = {
             'comment': forms.Textarea(attrs={'rows': 3}),
         }
+class ChangeUsernameForm(forms.Form):
+    new_username = forms.CharField(
+        label="Новый логин",
+        max_length=150,
+        widget=forms.TextInput(attrs={'class': 'form-control'}))
+    
+    current_password = forms.CharField(
+        label="Текущий пароль",
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+    
+    def clean_new_username(self):
+        new_username = self.cleaned_data['new_username']
+        if User.objects.filter(username=new_username).exclude(pk=self.user.pk).exists():
+            raise ValidationError("Этот логин уже занят.")
+        return new_username
+    
+    def clean_current_password(self):
+        current_password = self.cleaned_data['current_password']
+        if not self.user.check_password(current_password):
+            raise ValidationError("Неверный пароль.")
+        return current_password
