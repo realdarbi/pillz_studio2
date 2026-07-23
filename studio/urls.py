@@ -2,23 +2,19 @@
 
 from django.urls import path, include  
 from . import views
-from django.contrib.auth.decorators import login_required
-from .views import CustomLoginView
-from .views import change_username
 
 urlpatterns = [
-    path('', views.home, name='home'),                     
-    path('services/', views.services_list, name='services'),
-    path('service/<int:pk>/', views.service_detail, name='service_detail'),
-    path('profile/', login_required(views.profile), name='profile'),
-    path('register/', views.register, name='register'),
-    path('login/', CustomLoginView.as_view(), name='login'),
-
-    path('service/<int:pk>/', views.service_detail, name='service_detail'),
-    path('cancel_order/<int:order_id>/', views.cancel_order, name='cancel_order'),
-
-    path('delete_account/', login_required(views.delete_account), name='delete_account'),
-
-    path('change_username/', change_username, name='change_username'),
+    path('', views.home, name='home'),  # Только главная страница
+    
+    # =============================================
+    # ВСЕ ОСТАЛЬНЫЕ МАРШРУТЫ ВРЕМЕННО ОТКЛЮЧЕНЫ
+    # =============================================
+    # path('services/', views.services_list, name='services'),
+    # path('service/<int:pk>/', views.service_detail, name='service_detail'),
+    # path('profile/', login_required(views.profile), name='profile'),
+    # path('register/', views.register, name='register'),
+    # path('login/', CustomLoginView.as_view(), name='login'),
+    # path('cancel_order/<int:order_id>/', views.cancel_order, name='cancel_order'),
+    # path('delete_account/', login_required(views.delete_account), name='delete_account'),
+    # path('change_username/', change_username, name='change_username'),
 ]
-

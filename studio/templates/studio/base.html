@@ -3,9 +3,6 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
     <title>{% block title %}Pillz Studio | Студия звукозаписи{% endblock %}</title>
     {% load static %}
 
@@ -14,6 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'studio/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'studio/css/base.css' %}">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -28,7 +28,11 @@
 
                 <div class="nav-links">
                     <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Главная</a>
-
+                    
+                    <!-- ============================================ -->
+                    <!-- ВСЕ ФУНКЦИИ АВТОРИЗАЦИИ СКРЫТЫ ДЛЯ ОБЛОЖКИ   -->
+                    <!-- ============================================ -->
+                    <!--
                     {% if user.is_authenticated %}
                     <a href="{% url 'profile' %}" class="nav-link"><i class="fas fa-user"></i> Профиль</a>
                     <form action="{% url 'logout' %}" method="post" class="logout-form" style="display: inline;">
@@ -41,6 +45,7 @@
                     <a href="{% url 'login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Войти</a>
                     <a href="{% url 'register' %}" class="nav-link register-btn"><i class="fas fa-user-plus"></i> Регистрация</a>
                     {% endif %}
+                    -->
                 </div>
             </nav>
         </div>
@@ -80,6 +85,9 @@
             <p class="copyright">plug.</p>
         </div>
     </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     {% block extra_js %}
     <script src="{% static 'studio/js/base.js' %}"></script>

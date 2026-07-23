@@ -3,36 +3,1029 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'studio/css/home.css' %}">
+<style>
+    /* ===== ОБЩИЕ СТИЛИ ===== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #0a0a0a;
+        color: #fff;
+        font-family: 'Montserrat', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* ===== ГЛАВНАЯ ===== */
+    #main-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
+        text-align: center;
+        position: relative;
+        padding: 40px 20px;
+    }
+
+    .main-title {
+        font-size: clamp(3rem, 10vw, 6rem);
+        font-weight: 900;
+        letter-spacing: 6px;
+        background: linear-gradient(135deg, #fff 30%, #8888ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+
+    .main-subtitle {
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        opacity: 0.5;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        margin-bottom: 60px;
+    }
+
+    .selector-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        position: relative;
+    }
+
+    /* ===== СТРЕЛКИ ===== */
+    .arrow-btn {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        font-size: 1.8rem;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+        font-family: inherit;
+    }
+
+    .arrow-btn::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .arrow-btn:hover {
+        border-color: rgba(255,255,255,0.4);
+        transform: scale(1.1) rotate(-5deg);
+        background: rgba(255,255,255,0.08);
+    }
+
+    .arrow-btn:hover::before {
+        opacity: 1;
+    }
+
+    .arrow-btn:active {
+        transform: scale(0.95);
+    }
+
+    .arrow-btn .arrow-icon {
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s ease;
+    }
+
+    .arrow-btn:hover .arrow-icon {
+        transform: translateX(4px);
+    }
+
+    .arrow-btn.left:hover .arrow-icon {
+        transform: translateX(-4px);
+    }
+
+    .arrow-btn .glow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* ===== КАРТОЧКИ СТУДИЙ ===== */
+    .studio-cards {
+        display: flex;
+        gap: 40px;
+        min-width: 400px;
+        justify-content: center;
+    }
+
+    .studio-card-main {
+        padding: 20px 40px;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        min-width: 180px;
+        text-align: center;
+    }
+
+    .studio-card-main:hover {
+        transform: translateY(-8px) scale(1.03);
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.15);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .studio-card-main .name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .studio-card-main .badge {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.4;
+    }
+
+    .studio-card-main.pillz .name { color: #ff6b6b; }
+    .studio-card-main.space .name { color: #4ecdc4; }
+
+    /* ===== СТРАНИЦЫ СТУДИЙ ===== */
+    .studio-page {
+        display: none;
+        min-height: 100vh;
+        background: #0a0a0a;
+        animation: none;
+        position: relative;
+    }
+
+    .studio-page.active {
+        display: block;
+        animation: slideIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes slideIn {
+        0% {
+            opacity: 0;
+            transform: translateX(60px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .studio-page.slide-left.active {
+        animation: slideInLeft 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    @keyframes slideInLeft {
+        0% {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* ===== ГЕРОЙ СТУДИИ ===== */
+    .studio-hero {
+        height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .studio-hero .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+        transform: scale(1);
+    }
+
+    .studio-hero .slide.active {
+        opacity: 1;
+    }
+
+    .studio-hero .slide.zoom {
+        animation: zoomSlow 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes zoomSlow {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.08); }
+    }
+
+    .studio-hero .overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+        z-index: 2;
+    }
+
+    .studio-hero .hero-text {
+        position: relative;
+        z-index: 3;
+        text-align: center;
+        color: #fff;
+        padding: 0 20px;
+    }
+
+    .studio-hero .hero-text h1 {
+        font-size: clamp(2.5rem, 8vw, 5rem);
+        font-weight: 900;
+        margin-bottom: 16px;
+        text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+        letter-spacing: 2px;
+    }
+
+    .studio-hero .hero-text p {
+        font-size: clamp(1rem, 1.5vw, 1.3rem);
+        opacity: 0.7;
+        max-width: 500px;
+        margin: 0 auto;
+        letter-spacing: 1px;
+    }
+
+    .studio-hero .hero-text .pillz-accent {
+        color: #ff6b6b;
+    }
+    .studio-hero .hero-text .space-accent {
+        color: #4ecdc4;
+    }
+
+    /* ===== КНОПКА-СТРЕЛКА МЕЖДУ СТУДИЯМИ ===== */
+    .nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 5;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(12px);
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: inherit;
+        user-select: none;
+    }
+
+    .nav-arrow::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .nav-arrow:hover {
+        border-color: rgba(255,255,255,0.4);
+        transform: translateY(-50%) scale(1.1);
+        background: rgba(255,255,255,0.08);
+    }
+
+    .nav-arrow:hover::before {
+        opacity: 1;
+    }
+
+    .nav-arrow:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .nav-arrow .arrow-icon {
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-arrow.right:hover .arrow-icon {
+        transform: translateX(4px);
+    }
+
+    .nav-arrow.left:hover .arrow-icon {
+        transform: translateX(-4px);
+    }
+
+    .nav-arrow .glow {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* Позиции */
+    .nav-arrow.right {
+        right: 30px;
+    }
+
+    .nav-arrow.left {
+        left: 30px;
+    }
+
+    /* ===== КНОПКА ВОЗВРАТА НА ГЛАВНУЮ ===== */
+    .back-home-btn {
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        padding: 10px 28px;
+        border-radius: 50px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(12px);
+        color: #fff;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        font-family: inherit;
+        letter-spacing: 1px;
+        user-select: none;
+    }
+
+    .back-home-btn:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.2);
+        transform: translateX(-50%) scale(1.05);
+    }
+
+    /* ===== ИНФО-БЛОКИ ===== */
+    .studio-info {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 24px 60px;
+        color: #fff;
+    }
+
+    .studio-info .section-title {
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    .studio-info .section-sub {
+        opacity: 0.4;
+        font-size: 0.9rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        margin-bottom: 40px;
+    }
+
+    .studio-info .desc-text {
+        font-size: 1.05rem;
+        opacity: 0.7;
+        max-width: 700px;
+        line-height: 1.8;
+        margin-bottom: 50px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    .info-card {
+        background: rgba(255,255,255,0.03);
+        border-radius: 16px;
+        padding: 30px 28px;
+        border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.4s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-6px);
+        background: rgba(255,255,255,0.06);
+        border-color: rgba(255,255,255,0.1);
+    }
+
+    .info-card .card-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .info-card h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 14px;
+        letter-spacing: 0.5px;
+    }
+
+    .info-card ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .info-card ul li {
+        padding: 7px 0;
+        opacity: 0.6;
+        font-size: 0.95rem;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .info-card ul li:last-child {
+        border-bottom: none;
+    }
+
+    .info-card ul li strong {
+        opacity: 1;
+        font-weight: 500;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 16px;
+        margin-top: 18px;
+    }
+
+    .social-links a {
+        color: #fff;
+        font-size: 1.5rem;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        opacity: 1;
+        transform: scale(1.1) translateY(-2px);
+    }
+
+    /* ===== КАРТА — СТИЛЬНЫЙ БЛОК ===== */
+    .map-card {
+        grid-column: 1 / -1;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-top: 20px;
+    }
+
+    .map-card-inner {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        backdrop-filter: blur(4px);
+    }
+
+    .map-card-inner:hover {
+        border-color: rgba(255,255,255,0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    /* ===== ШАПКА КАРТЫ ===== */
+    .map-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        background: rgba(255,255,255,0.02);
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .map-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .map-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(78, 205, 196, 0.1);
+        border: 1px solid rgba(78, 205, 196, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #4ecdc4;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+    }
+
+    .map-card-inner:hover .map-icon-wrapper {
+        background: rgba(78, 205, 196, 0.18);
+        border-color: rgba(78, 205, 196, 0.25);
+        transform: scale(1.05);
+    }
+
+    .map-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        letter-spacing: 0.5px;
+        color: #fff;
+    }
+
+    .map-address {
+        font-size: 0.85rem;
+        opacity: 0.5;
+        margin: 2px 0 0 0;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .map-address i {
+        font-size: 0.7rem;
+        color: #4ecdc4;
+        opacity: 0.6;
+    }
+
+    /* ===== КНОПКА МАРШРУТА ===== */
+    .map-route-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 24px;
+        border-radius: 50px;
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.12), rgba(78, 205, 196, 0.04));
+        color: #4ecdc4;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 1px solid rgba(78, 205, 196, 0.08);
+        font-family: 'Montserrat', sans-serif;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
+
+    .map-route-btn i {
+        font-size: 0.9rem;
+        transition: transform 0.3s ease;
+    }
+
+    .map-route-btn:hover {
+        background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.08));
+        border-color: rgba(78, 205, 196, 0.2);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(78, 205, 196, 0.15);
+        color: #4ecdc4;
+    }
+
+    .map-route-btn:hover i {
+        transform: translateX(4px);
+    }
+
+    /* ===== КАРТА ===== */
+    .map-container {
+        height: 240px;
+        width: 100%;
+        background: #0a0a0a;
+        border-radius: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* ===== ПОДВАЛ КАРТЫ ===== */
+    .map-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+        background: rgba(255,255,255,0.015);
+        border-top: 1px solid rgba(255,255,255,0.03);
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .map-footer-text {
+        font-size: 0.78rem;
+        opacity: 0.35;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: opacity 0.3s ease;
+    }
+
+    .map-footer-text i {
+        font-size: 0.8rem;
+        color: #4ecdc4;
+        opacity: 0.5;
+    }
+
+    .map-card-inner:hover .map-footer-text {
+        opacity: 0.6;
+    }
+
+    /* ===== ТЁМНАЯ ТЕМА ДЛЯ LEAFLET ===== */
+    .leaflet-tile-pane {
+        filter: invert(1) hue-rotate(180deg) brightness(0.8) contrast(1.2);
+    }
+
+    .leaflet-popup-content-wrapper,
+    .leaflet-popup-tip {
+        background: #1a1a2e !important;
+        color: #fff !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+    }
+
+    .leaflet-popup-content {
+        color: #fff !important;
+        font-family: 'Montserrat', sans-serif !important;
+    }
+
+    .leaflet-popup-content a {
+        color: #4ecdc4 !important;
+    }
+
+    .leaflet-control-zoom a {
+        background: rgba(255,255,255,0.05) !important;
+        color: #fff !important;
+        border-color: rgba(255,255,255,0.1) !important;
+    }
+
+    .leaflet-control-zoom a:hover {
+        background: rgba(255,255,255,0.1) !important;
+    }
+
+    /* ===== КНОПКА НАВЕРХ ===== */
+    #backToTopBtn {
+        display: none;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(12px);
+        color: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 999;
+        font-family: inherit;
+    }
+
+    #backToTopBtn:hover {
+        background: rgba(255,255,255,0.12);
+        transform: translateY(-4px) scale(1.05);
+    }
+
+    /* ===== АДАПТИВ ===== */
+    @media (max-width: 768px) {
+        .selector-wrapper {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .studio-cards {
+            flex-direction: column;
+            min-width: unset;
+            width: 100%;
+            gap: 16px;
+        }
+
+        .arrow-btn {
+            width: 56px;
+            height: 56px;
+            font-size: 1.3rem;
+        }
+
+        .studio-card-main {
+            padding: 16px 24px;
+            min-width: unset;
+        }
+
+        .nav-arrow {
+            width: 44px;
+            height: 44px;
+            font-size: 1.2rem;
+        }
+
+        .nav-arrow.right {
+            right: 16px;
+        }
+
+        .nav-arrow.left {
+            left: 16px;
+        }
+
+        .back-home-btn {
+            top: 16px;
+            padding: 6px 16px;
+            font-size: 0.7rem;
+        }
+
+        .studio-info {
+            padding: 40px 16px 30px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .map-header {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 14px 16px;
+        }
+
+        .map-route-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .map-container {
+            height: 180px;
+        }
+
+        .map-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 12px 16px;
+        }
+
+        #backToTopBtn {
+            bottom: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            font-size: 1rem;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="hero-slider">
-    <div class="slide active" style="background-image: url('{% static 'studio/media/backgrounds/studio1.jpg' %}')"></div>
-    <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio2.jpg' %}')"></div>
-    <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio3.jpg' %}')"></div>
-    <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio4.jpg' %}')"></div>
+<!-- ===== ГЛАВНАЯ ===== -->
+<div id="main-page">
+    <h1 class="main-title">Pillz Studio's</h1>
+    <p class="main-subtitle">Две студии — один стиль</p>
 
-    <div class="hero-content">
-        <h1>Pillz Studio</h1>
-        <p>Профессиональная запись и сведение музыки</p>
+    <div class="selector-wrapper">
+        <button class="arrow-btn left" onclick="switchStudio('pillz', 'left')" aria-label="Pillz Studio">
+            <span class="arrow-icon">←</span>
+            <span class="glow"></span>
+        </button>
+
+        <div class="studio-cards">
+            <div class="studio-card-main pillz" onclick="switchStudio('pillz', 'left')">
+                <span class="name">Pillz Studio</span>
+                <span class="badge">✦ Профессиональная</span>
+            </div>
+            <div class="studio-card-main space" onclick="switchStudio('space', 'right')">
+                <span class="name">Space Pillz</span>
+                <span class="badge">✦ Креативная</span>
+            </div>
+        </div>
+
+        <button class="arrow-btn right" onclick="switchStudio('space', 'right')" aria-label="Space Pillz">
+            <span class="arrow-icon">→</span>
+            <span class="glow"></span>
+        </button>
     </div>
 </div>
-<div class="services-container">
-    <h1 class="heading">Наши услуги</h1>
 
-    {% for service in services %}
-    <a href="{% url 'service_detail' service.pk %}" class="service-link">
-        <div class="service-card" date-service-id="{{ service.pk }}">
-            <div class="service-info">
-                <h3 class="service-name">{{ service.name }}</h3>
-                <p class="service-price">от {{ service.min_price }} ₽</p>
-            </div>
-            <img src="{% static 'studio/media/service/service-'|add:service.category|add:'.jpg' %}"
-                 alt="{{ service.name }}"
-                 class="service-image">
+<!-- ===== PILLZ STUDIO ===== -->
+<div class="studio-page" id="studio-pillz">
+    <div class="studio-hero">
+        <div class="slide active zoom" style="background-image: url('{% static 'studio/media/backgrounds/studio1.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio2.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio3.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio4.jpg' %}')"></div>
+        <div class="overlay"></div>
+
+        <button class="back-home-btn" onclick="goHome()">✦ На главную</button>
+        <button class="nav-arrow right" onclick="switchStudio('space', 'right')" aria-label="Space Pillz">
+            <span class="arrow-icon">→</span>
+            <span class="glow"></span>
+        </button>
+
+        <div class="hero-text">
+            <h1>Pillz <span class="pillz-accent">Studio</span></h1>
+            <p>Профессиональная студия звукозаписи</p>
         </div>
-    </a>
-    {% endfor %}
+    </div>
+
+    <div class="studio-info">
+        <h2 class="section-title">О студии</h2>
+        <p class="section-sub">Pillz Studio</p>
+        <p class="desc-text">
+            Pillz Studio — это профессиональная студия звукозаписи с полным спектром услуг.
+            Мы работаем с артистами любого уровня, обеспечивая качественный звук и комфортную атмосферу.
+        </p>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <span class="card-icon">🎤</span>
+                <h3>Услуги</h3>
+                <ul>
+                    <li>Запись вокала и инструментов</li>
+                    <li>Сведение и мастеринг</li>
+                    <li>Аранжировка</li>
+                    <li>Создание инструменталов</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <span class="card-icon">📍</span>
+                <h3>Контакты</h3>
+                <ul>
+                    <li>г. Красноярск, ул. Республики, 51</li>
+                    <li><strong>📞</strong> +7 (XXX) XXX-XX-XX</li>
+                    <li><strong>✉️</strong> info@pillzstudio.ru</li>
+                </ul>
+                <div class="social-links">
+                    <a href="https://vk.com/pillzstudio" target="_blank"><i class="fab fa-vk"></i></a>
+                    <a href="https://t.me/pillzstudio" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="https://instagram.com/night_pillz" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="info-card">
+                <span class="card-icon">👥</span>
+                <h3>Команда</h3>
+                <ul>
+                    <li><strong>Иван</strong> — звукорежиссёр</li>
+                    <li><strong>Анна</strong> — звукорежиссёр</li>
+                    <li><strong>Ольга</strong> — администратор</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===== КАРТА PILLZ STUDIO ===== -->
+        <div class="info-card map-card">
+            <div class="map-card-inner">
+                <div class="map-header">
+                    <div class="map-header-left">
+                        <div class="map-icon-wrapper">
+                            <i class="fas fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <h3 class="map-title">Где мы?</h3>
+                            <p class="map-address">
+                                <i class="fas fa-map-pin"></i> г. Красноярск, ул. Республики, 51
+                            </p>
+                        </div>
+                    </div>
+                    <a href="https://yandex.ru/maps/62/krasnoyarsk/house/ulitsa_respubliki_51/bUsYfgRpSEAGQFtsfXxwdH1jbA==/inside/?ll=92.839151%2C56.015108&tab=inside&z=16.6" 
+                       target="_blank" 
+                       class="map-route-btn">
+                        <i class="fas fa-route"></i>
+                        <span>Проложить маршрут</span>
+                    </a>
+                </div>
+                <div id="map-pillz" class="map-container"></div>
+                <div class="map-footer">
+                    <span class="map-footer-text">
+                        <i class="fas fa-clock"></i> Ежедневно с 10:00 до 22:00
+                    </span>
+                    <span class="map-footer-text">
+                        <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SPACE PILLZ ===== -->
+<div class="studio-page" id="studio-space">
+    <div class="studio-hero">
+        <div class="slide active zoom" style="background-image: url('{% static 'studio/media/backgrounds/studio1.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio2.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio3.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/studio4.jpg' %}')"></div>
+        <div class="overlay"></div>
+
+        <button class="back-home-btn" onclick="goHome()">✦ На главную</button>
+        <button class="nav-arrow left" onclick="switchStudio('pillz', 'left')" aria-label="Pillz Studio">
+            <span class="arrow-icon">←</span>
+            <span class="glow"></span>
+        </button>
+
+        <div class="hero-text">
+            <h1>Space <span class="space-accent">Pillz</span></h1>
+            <p>Креативное пространство для экспериментов</p>
+        </div>
+    </div>
+
+    <div class="studio-info">
+        <h2 class="section-title">О студии</h2>
+        <p class="section-sub">Space Pillz</p>
+        <p class="desc-text">
+            Space Pillz — это демократичная студия для творческих экспериментов.
+            Записывайся без звукорежиссёра, работай круглосуточно и создавай музыку в своём темпе.
+        </p>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <span class="card-icon">🚀</span>
+                <h3>Особенности</h3>
+                <ul>
+                    <li>⏰ Круглосуточная работа</li>
+                    <li>🎚️ Запись без звукорежиссёра</li>
+                    <li>🎛️ Оборудование премиум-класса</li>
+                    <li>💸 Гибкие цены</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <span class="card-icon">📍</span>
+                <h3>Контакты</h3>
+                <ul>
+                    <li>г. Москва, ул. Дубровинского, 43</li>
+                    <li><strong>📞</strong> +7 (XXX) XXX-XX-XX</li>
+                    <li><strong>✉️</strong> space@pillzstudio.ru</li>
+                </ul>
+                <div class="social-links">
+                    <a href="https://vk.com/pillzstudio" target="_blank"><i class="fab fa-vk"></i></a>
+                    <a href="https://t.me/pillzstudio" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="https://instagram.com/night_pillz" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="info-card">
+                <span class="card-icon">👥</span>
+                <h3>Команда</h3>
+                <ul>
+                    <li><strong>Максим</strong> — тех. специалист</li>
+                    <li><strong>Екатерина</strong> — менеджер</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ===== КАРТА SPACE PILLZ ===== -->
+        <div class="info-card map-card">
+            <div class="map-card-inner">
+                <div class="map-header">
+                    <div class="map-header-left">
+                        <div class="map-icon-wrapper">
+                            <i class="fas fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <h3 class="map-title">Где мы?</h3>
+                            <p class="map-address">
+                                <i class="fas fa-map-pin"></i> г. Москва, ул. Дубровинского, 43
+                            </p>
+                        </div>
+                    </div>
+                    <a href="https://yandex.ru/maps/62/krasnoyarsk/house/ulitsa_dubrovinskogo_43/bUsYfgJnSU0GQFtsfXxxd3pibA==/?ll=92.857081%2C56.006618&z=16.6" 
+                       target="_blank" 
+                       class="map-route-btn">
+                        <i class="fas fa-route"></i>
+                        <span>Проложить маршрут</span>
+                    </a>
+                </div>
+                <div id="map-space" class="map-container"></div>
+                <div class="map-footer">
+                    <span class="map-footer-text">
+                        <i class="fas fa-clock"></i> Круглосуточно, 24/7
+                    </span>
+                    <span class="map-footer-text">
+                        <i class="fas fa-phone"></i> +7 (XXX) XXX-XX-XX
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <button id="backToTopBtn" title="Наверх">↑</button>
@@ -40,4 +1033,205 @@
 
 {% block extra_js %}
 <script src="{% static 'studio/js/home.js' %}"></script>
+<script>
+    // ===== ПЕРЕМЕННЫЕ =====
+    let slideInterval = null;
+    let mapsInitialized = false;
+
+    // ===== ПЕРЕКЛЮЧЕНИЕ СТУДИЙ =====
+    function switchStudio(name, direction) {
+        const mainPage = document.getElementById('main-page');
+        const pillzPage = document.getElementById('studio-pillz');
+        const spacePage = document.getElementById('studio-space');
+
+        mainPage.style.display = 'none';
+
+        pillzPage.classList.remove('active', 'slide-left');
+        spacePage.classList.remove('active', 'slide-left');
+
+        if (name === 'pillz') {
+            pillzPage.classList.add('active');
+            if (direction === 'left') pillzPage.classList.add('slide-left');
+            spacePage.classList.remove('active');
+        } else if (name === 'space') {
+            spacePage.classList.add('active');
+            pillzPage.classList.remove('active');
+        }
+
+        startSlideshow(name);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('backToTopBtn').style.display = 'block';
+
+        // Инициализируем карты при первом переключении
+        if (!mapsInitialized) {
+            setTimeout(initMaps, 400);
+            mapsInitialized = true;
+        } else {
+            // Обновляем карты при переключении
+            setTimeout(() => {
+                ['pillz', 'space'].forEach((key) => {
+                    const el = document.getElementById(`map-${key}`);
+                    if (el && el._leaflet_id) {
+                        const map = L.map(el);
+                        setTimeout(() => map.invalidateSize(), 200);
+                    }
+                });
+            }, 500);
+        }
+    }
+
+    // ===== ВОЗВРАТ НА ГЛАВНУЮ =====
+    function goHome() {
+        if (slideInterval) {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        }
+
+        document.getElementById('studio-pillz').classList.remove('active', 'slide-left');
+        document.getElementById('studio-space').classList.remove('active', 'slide-left');
+        document.getElementById('main-page').style.display = 'flex';
+        document.getElementById('backToTopBtn').style.display = 'none';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== СЛАЙДШОУ =====
+    function startSlideshow(studio) {
+        if (slideInterval) {
+            clearInterval(slideInterval);
+            slideInterval = null;
+        }
+
+        const page = document.getElementById(`studio-${studio}`);
+        if (!page) return;
+
+        const slides = page.querySelectorAll('.studio-hero .slide');
+        if (slides.length < 2) return;
+
+        let current = 0;
+
+        slides.forEach((s, i) => {
+            s.classList.toggle('active', i === 0);
+            if (i === 0) s.classList.add('zoom');
+            else s.classList.remove('zoom');
+        });
+
+        slideInterval = setInterval(() => {
+            slides[current].classList.remove('active', 'zoom');
+            current = (current + 1) % slides.length;
+            slides[current].classList.add('active', 'zoom');
+        }, 4500);
+    }
+
+    // ===== КАРТЫ =====
+    function initMaps() {
+        const studios = {
+            pillz: {
+                lat: 56.0147,      // ← ЗАМЕНИ НА РЕАЛЬНЫЕ КООРДИНАТЫ
+                lng: 92.8396,
+                name: 'Pillz Studio',
+                address: 'г. Красноярск, ул. Республики, 51'
+            },
+            space: {
+                lat: 56.0067,      // ← ЗАМЕНИ НА РЕАЛЬНЫЕ КООРДИНАТЫ
+                lng: 92.8572, 
+                name: 'Space Pillz',
+                address: 'г. Красноярск, ул. Дубровинского, 43'
+            }
+        };
+
+        ['pillz', 'space'].forEach((key) => {
+            const el = document.getElementById(`map-${key}`);
+            if (!el) return;
+            
+            // Проверяем, не инициализирована ли уже карта
+            if (el._leaflet_id) return;
+
+            const data = studios[key];
+            const map = L.map(el, {
+                center: [data.lat, data.lng],
+                zoom: 16,
+                zoomControl: true,
+                attributionControl: true
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            const customIcon = L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    background: #4ecdc4;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    border: 3px solid #fff;
+                    box-shadow: 0 0 30px rgba(78, 205, 196, 0.6);
+                "></div>`,
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            L.marker([data.lat, data.lng], { icon: customIcon })
+                .addTo(map)
+                .bindPopup(`
+                    <strong>${data.name}</strong><br>
+                    ${data.address}
+                `)
+                .openPopup();
+
+            setTimeout(() => map.invalidateSize(), 300);
+        });
+    }
+
+    // ===== КЛИК ПО КАРТОЧКАМ =====
+    document.querySelectorAll('.studio-card-main').forEach(card => {
+        card.addEventListener('click', function() {
+            const isPillz = this.classList.contains('pillz');
+            switchStudio(isPillz ? 'pillz' : 'space', isPillz ? 'left' : 'right');
+        });
+    });
+
+    // ===== КЛАВИАТУРА =====
+    document.addEventListener('keydown', (e) => {
+        const mainPage = document.getElementById('main-page');
+        if (mainPage.style.display !== 'none') {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                switchStudio('pillz', 'left');
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                switchStudio('space', 'right');
+            }
+        } else if (e.key === 'Escape' || e.key === 'Backspace') {
+            goHome();
+        }
+    });
+
+    // ===== КНОПКА НАВЕРХ =====
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('scroll', () => {
+        if (document.getElementById('main-page').style.display === 'none') {
+            backToTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+        }
+    });
+
+    // ===== СКРЫВАЕМ КНОПКУ НА ГЛАВНОЙ =====
+    const observer = new MutationObserver(() => {
+        if (document.getElementById('main-page').style.display !== 'none') {
+            backToTopBtn.style.display = 'none';
+        }
+    });
+    observer.observe(document.getElementById('main-page'), {
+        attributes: true,
+        attributeFilter: ['style']
+    });
+
+    document.getElementById('main-page').style.display = 'flex';
+</script>
 {% endblock %}
