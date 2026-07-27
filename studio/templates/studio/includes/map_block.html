@@ -1,0 +1,43 @@
+<div class="info-card map-card">
+    <div class="map-card-inner">
+        <div class="map-header">
+            <div class="map-header-left">
+                <div class="map-icon-wrapper">
+                    <i class="fas fa-location-dot"></i>
+                </div>
+                <div>
+                    <h3 class="map-title">Где мы?</h3>
+                    <p class="map-address">
+                        <i class="fas fa-map-pin"></i>
+                        {% if studio == 'pillz' %}
+                            г. Красноярск, ул. Республики, 51
+                        {% else %}
+                            г. Красноярск, ул. Дубровинского, 43
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <a href="https://yandex.ru/maps/?text={% if studio == 'pillz' %}Красноярск%20ул.%20Республики%2051{% else %}Красноярск%20ул.%20Дубровинского%2043{% endif %}" 
+               target="_blank" 
+               class="map-route-btn">
+                <i class="fas fa-route"></i>
+                <span>Проложить маршрут</span>
+            </a>
+        </div>
+        <div id="map-{{ studio }}" class="map-container"></div>
+        <div class="map-footer">
+            <span class="map-footer-text">
+                <i class="fas fa-clock"></i>
+                {% if studio == 'pillz' %}
+                    Ежедневно с 10:00 до 22:00
+                {% else %}
+                    Круглосуточно, 24/7
+                {% endif %}
+            </span>
+            <span class="map-footer-text">
+                <i class="fas fa-phone"></i>
+                +7 (XXX) XXX-XX-XX
+            </span>
+        </div>
+    </div>
+</div>

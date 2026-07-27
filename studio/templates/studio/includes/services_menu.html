@@ -1,0 +1,195 @@
+{% load static %}
+
+<style>
+    .services-menu-card {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    .services-menu-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .services-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+    }
+    .services-badge {
+        margin-left: auto;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        padding: 4px 14px;
+        border-radius: 50px;
+        background: rgba(78, 205, 196, 0.1);
+        color: #4ecdc4;
+    }
+    .services-grid {
+        display: flex;
+        flex-direction: column;
+    }
+    .service-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+        gap: 16px;
+    }
+    .service-item:last-child {
+        border-bottom: none;
+    }
+    .service-name {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #fff;
+    }
+    .service-desc {
+        font-size: 0.75rem;
+        opacity: 0.3;
+    }
+    .service-price {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #4ecdc4;
+        white-space: nowrap;
+    }
+    .service-info {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .service-item:hover {
+        background: rgba(255,255,255,0.03);
+        padding-left: 28px;
+    }
+    @media (max-width: 600px) {
+        .service-item {
+            flex-wrap: wrap;
+            padding: 12px 16px;
+        }
+        .service-price {
+            width: 100%;
+            text-align: right;
+        }
+    }
+</style>
+
+<div class="services-menu-card">
+    <div class="services-menu-header">
+        <span class="services-icon">🎧</span>
+        <h3 class="services-title">Меню студии</h3>
+        <span class="services-badge">цены</span>
+    </div>
+
+    <div class="services-grid">
+        {% if studio == 'pillz' %}
+                    <!-- ===== SPACE PILLZ ===== -->
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Запись со звукоинженером</span>
+                    <span class="service-desc">Круглосуточная самостоятельная запись</span>
+                </div>
+                <span class="service-price">700 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Трек под ключ</span>
+                    <span class="service-desc">Полный цикл создания песни: от идеи до полноценной композиции</span>
+                </div>
+                <span class="service-price">от 10 000 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Сведение</span>
+                    <span class="service-desc">Качественное сведение трека</span>
+                </div>
+                <span class="service-price">от 3 000 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Бит на заказ</span>
+                    <span class="service-desc">Бит под ваш стиль</span>
+                </div>
+                <span class="service-price">от 4 000 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Дистрибуция</span>
+                    <span class="service-desc">Релиз трека на платформах</span>
+                </div>
+                <span class="service-price">от 350 ₽</span>
+            </div>
+
+
+        {% else %}
+                    <!-- ===== PILLZ STUDIO ===== -->
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Запись со звукоинженером</span>
+                    <span class="service-desc">Профессиональная запись с опытным звукорежиссёром</span>
+                </div>
+                <span class="service-price">600 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Запись без звукоинженера</span>
+                    <span class="service-desc">Самостоятельная работа в студии</span>
+                </div>
+                <span class="service-price">450 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Ночь на студии</span>
+                    <span class="service-desc">Аренда студии на всю ночь</span>
+                </div>
+                <span class="service-price">3 000 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Сведение</span>
+                    <span class="service-desc">Профессиональное сведение трека</span>
+                </div>
+                <span class="service-price">от 2 500 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Экспресс сведение</span>
+                    <span class="service-desc">Быстрое сведение за 24 часа</span>
+                </div>
+                <span class="service-price">650 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Бит на заказ</span>
+                    <span class="service-desc">Индивидуальный бит под ваш стиль</span>
+                </div>
+                <span class="service-price">от 3 000 ₽</span>
+            </div>
+
+            <div class="service-item">
+                <div class="service-info">
+                    <span class="service-name">Дистрибуция</span>
+                    <span class="service-desc">Релиз вашего трека на платформах</span>
+                </div>
+                <span class="service-price">от 350 ₽</span>
+            </div>
+
+
+        {% endif %}
+    </div>
+</div>

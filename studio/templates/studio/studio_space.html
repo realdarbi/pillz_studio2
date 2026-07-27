@@ -1,0 +1,58 @@
+{% load static %}
+
+<div class="studio-page" id="studio-space">
+    <div class="studio-hero">
+        <div class="slide active zoom" style="background-image: url('{% static 'studio/media/backgrounds/spacepillz1.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/spacepillz2.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/spacepillz3.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/spacepillz4.jpg' %}')"></div>
+        <div class="overlay"></div>
+
+        <button class="back-home-btn" onclick="goHome()">✦ На главную</button>
+        <button class="nav-arrow left" onclick="switchStudio('pillz', 'left')" aria-label="Pillz Studio">
+            <span class="arrow-icon">←</span>
+            <span class="glow"></span>
+        </button>
+
+        <div class="hero-text">
+            <h1>Space <span class="space-accent">Pillz</span></h1>
+            <p>Пространство для творческого уединения - даже ночью!</p>
+        </div>
+    </div>
+
+    <div class="studio-info">
+        <h2 class="section-title">О студии</h2>
+        <p class="section-sub">Space Pillz</p>
+        <p class="desc-text">
+            Space Pillz — это демократичная студия для творческих экспериментов.
+            Записывайся без звукорежиссёра, работай круглосуточно и создавай музыку в своём темпе.
+        </p>
+
+        <!-- ===== МЕНЮ УСЛУГ ===== -->
+        {% include 'studio/includes/services_menu.html' with studio='space' %}
+
+        <!-- ===== КОНТАКТЫ И КОМАНДА ===== -->
+        <div class="info-grid" style="margin-top: 30px;">
+            <div class="info-card">
+                <span class="card-icon">📍</span>
+                <h3>Контакты</h3>
+                <ul>
+                    <li>г. Красноярск, ул. Дубровинского, 43</li>
+                    <li><strong>📞</strong> +7 (923) 314 78 55</li>
+                    <li><strong>✉️</strong> space@pillzstudio.ru</li>
+                </ul>
+                <div class="social-links">
+                    <a href="https://vk.com/pillzstudio" target="_blank"><i class="fab fa-vk"></i></a>
+                    <a href="https://t.me/pillzstudio" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="https://instagram.com/night_pillz" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- ===== ОБОРУДОВАНИЕ ===== -->
+        {% include 'studio/includes/equipment.html' with studio='space' %}
+
+
+        <!-- ===== КАРТА ===== -->
+        {% include 'studio/includes/map_block.html' with studio='space' %}
+    </div>
+</div>

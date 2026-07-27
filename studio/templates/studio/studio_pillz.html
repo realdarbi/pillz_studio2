@@ -1,0 +1,59 @@
+{% load static %}
+
+<div class="studio-page" id="studio-pillz">
+    <div class="studio-hero">
+        <div class="slide active zoom" style="background-image: url('{% static 'studio/media/backgrounds/pillz1.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/pillz2.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/pillz3.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/pillz4.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/pillz5.jpg' %}')"></div>
+        <div class="slide" style="background-image: url('{% static 'studio/media/backgrounds/pillz6.jpg' %}')"></div>
+        <div class="overlay"></div>
+
+        <button class="back-home-btn" onclick="goHome()">✦ На главную</button>
+        <button class="nav-arrow right" onclick="switchStudio('space', 'right')" aria-label="Space Pillz">
+            <span class="arrow-icon">→</span>
+            <span class="glow"></span>
+        </button>
+
+        <div class="hero-text">
+            <h1>Pillz <span class="pillz-accent">Studio</span></h1>
+            <p>Профессиональная студия звукозаписи</p>
+        </div>
+    </div>
+
+    <div class="studio-info">
+        <h2 class="section-title">О студии</h2>
+        <p class="section-sub">Pillz Studio</p>
+        <p class="desc-text">
+            Pillz Studio — это профессиональная студия звукозаписи с полным спектром услуг.
+            Мы работаем с артистами любого уровня, обеспечивая качественный звук и комфортную атмосферу.
+        </p>
+
+        <!-- ===== МЕНЮ УСЛУГ ===== -->
+        {% include 'studio/includes/services_menu.html' with studio='pillz' %}
+
+        <!-- ===== КОНТАКТЫ И КОМАНДА ===== -->
+        <div class="info-grid" style="margin-top: 30px;">
+            <div class="info-card">
+                <span class="card-icon">📍</span>
+                <h3>Контакты</h3>
+                <ul>
+                    <li>г. Красноярск, ул. Республики, 51</li>
+                    <li><strong>📞</strong> +7 (923) 314 78 55</li>
+                    <li><strong>✉️</strong> info@pillzstudio.ru</li>
+                </ul>
+                <div class="social-links">
+                    <a href="https://vk.com/pillzstudio" target="_blank"><i class="fab fa-vk"></i></a>
+                    <a href="https://t.me/pillzstudio" target="_blank"><i class="fab fa-telegram"></i></a>
+                    <a href="https://instagram.com/night_pillz" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- ===== ОБОРУДОВАНИЕ ===== -->
+        {% include 'studio/includes/equipment.html' with studio='pillz' %}
+
+        <!-- ===== КАРТА ===== -->
+        {% include 'studio/includes/map_block.html' with studio='pillz' %}
+    </div>
+</div>

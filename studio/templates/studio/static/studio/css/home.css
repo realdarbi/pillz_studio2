@@ -14,8 +14,6 @@ body {
 
 /* ===== ГЛАВНАЯ ===== */
 #main-page {
-    position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,15 +21,8 @@ body {
     min-height: 100vh;
     background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
     text-align: center;
+    position: relative;
     padding: 40px 20px;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-#main-page h1,
-#main-page p,
-#main-page .selector-wrapper {
-    pointer-events: auto;
 }
 
 .main-title {
@@ -169,220 +160,6 @@ body {
 
 .studio-card-main.pillz .name { color: #ff6b6b; }
 .studio-card-main.space .name { color: #4ecdc4; }
-
-/* ===== ИНТЕРАКТИВНЫЙ ЛОГОТИП (НА ЗАДНЕМ ПЛАНЕ) ===== */
-.logo-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    z-index: 0;
-    pointer-events: auto;
-}
-
-
-.logo-container {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
-    max-width: 85%;
-    max-height: 85%;
-    padding: 20px;
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-
-.logo-container .main-logo {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-    display: block;
-    filter: blur(12px) brightness(0.12);
-    opacity: 0.1;
-    mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
-    transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    flex-shrink: 0;
-    animation: logoAppear 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* ===== АНИМАЦИЯ ПОЯВЛЕНИЯ ===== */
-@keyframes logoAppear {
-    0% {
-        transform: scale(0) rotate(180deg) translateY(-50px);
-        opacity: 0;
-        filter: blur(15px);
-    }
-    50% {
-        filter: blur(3px);
-    }
-    100% {
-        transform: scale(1) rotate(0deg) translateY(0);
-        opacity: 1;
-        filter: blur(0);
-    }
-}
-
-/* ===== АНИМАЦИЯ СЛИЯНИЯ ===== */
-@keyframes logoMerge {
-    0% {
-        transform: scale(1.8) rotate(-30deg);
-        opacity: 0.1;
-        filter: blur(25px) brightness(2);
-    }
-    50% {
-        transform: scale(0.85) rotate(5deg);
-        opacity: 0.6;
-        filter: blur(8px) brightness(1.5);
-    }
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-        filter: blur(0) brightness(1);
-    }
-}
-
-.logo-container.merging .main-logo {
-    animation: logoMerge 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-/* ===== СВЕЧЕНИЕ ===== */
-.logo-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%;
-    max-width: 700px;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(78, 205, 196, 0.1) 0%, rgba(78, 205, 196, 0.03) 40%, transparent 70%);
-    opacity: 0;
-    transition: all 0.8s ease;
-    pointer-events: none;
-    z-index: -1;
-    filter: blur(40px);
-}
-
-.logo-wrapper.holding .logo-glow {
-    opacity: 1;
-    animation: glowPulse 1.2s ease-in-out infinite alternate;
-}
-
-@keyframes glowPulse {
-    0% {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 0.3;
-        filter: blur(50px);
-        background: radial-gradient(circle, rgba(78, 205, 196, 0.2) 0%, rgba(78, 205, 196, 0.08) 40%, transparent 70%);
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(1.5);
-        opacity: 0.8;
-        filter: blur(20px);
-        background: radial-gradient(circle, rgba(78, 205, 196, 0.3) 0%, rgba(78, 205, 196, 0.1) 40%, transparent 70%);
-    }
-}
-
-.logo-wrapper.holding .main-logo {
-    filter: drop-shadow(0 0 60px rgba(78, 205, 196, 0.25)) brightness(1.1);
-    filter: blur(0px);
-    opacity: 1;
-}
-
-/* ===== СЧЁТЧИК ===== */
-.logo-counter {
-    position: fixed;
-    top: 30px;
-    right: 30px;
-    background: rgba(78, 205, 196, 0.12);
-    border: 1px solid rgba(78, 205, 196, 0.2);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #4ecdc4;
-    z-index: 100;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    opacity: 0;
-    transform: scale(0.5) rotate(-90deg);
-    font-family: 'Montserrat', sans-serif;
-    box-shadow: 0 0 40px rgba(78, 205, 196, 0.1);
-}
-
-.logo-counter.show {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-}
-
-.logo-counter.animate {
-    animation: counterPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes counterPop {
-    0% {
-        transform: scale(0.3) rotate(-90deg);
-        opacity: 0;
-    }
-    40% {
-        transform: scale(1.4) rotate(10deg);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-    }
-}
-
-/* ===== ВСПЫШКА ПРИ СЛИЯНИИ ===== */
-.logo-wrapper .flash-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(78, 205, 196, 0.4) 0%, transparent 70%);
-    opacity: 0;
-    pointer-events: none;
-    z-index: -1;
-    filter: blur(60px);
-    transition: none;
-}
-
-.logo-wrapper .flash-overlay.active {
-    animation: flashBoom 0.7s ease-out forwards;
-}
-
-@keyframes flashBoom {
-    0% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(0.5);
-        filter: blur(30px);
-    }
-    100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(3);
-        filter: blur(80px);
-    }
-}
 
 /* ===== СТРАНИЦЫ СТУДИЙ ===== */
 .studio-page {
@@ -922,7 +699,6 @@ body {
     background: rgba(255,255,255,0.12);
     transform: translateY(-4px) scale(1.05);
 }
-
 /* ===== МЕНЮ УСЛУГ (СТИЛЬНЫЙ БЛОК) ===== */
 .services-menu-card {
     background: rgba(255,255,255,0.02);
@@ -1027,7 +803,7 @@ body {
     padding-left: 16px;
 }
 
-/* ===== АДАПТИВ ДЛЯ МЕНЮ УСЛУГ ===== */
+/* Адаптив */
 @media (max-width: 600px) {
     .services-menu-header {
         padding: 14px 16px;
@@ -1148,59 +924,5 @@ body {
         width: 44px;
         height: 44px;
         font-size: 1rem;
-    }
-
-    /* Адаптив для логотипа */
-    .logo-container .main-logo {
-        width: 120px;
-        height: 120px;
-        gap: 20px;
-        filter: blur(10px);
-        opacity: 0.2;
-        transition: all 0.6s ease;
-    }
-    .logo-counter {
-        width: 36px;
-        height: 36px;
-        font-size: 0.8rem;
-        top: 16px;
-        right: 16px;
-    }
-    .logo-container {
-        gap: 20px;
-        padding: 10px;
-    }
-    .logo-wrapper .flash-overlay {
-        width: 250px;
-        height: 250px;
-    }
-    .logo-glow {
-        max-width: 400px;
-    }
-}
-
-@media (max-width: 480px) {
-    .logo-container .main-logo {
-        width: 80px;
-        height: 80px;
-        gap: 14px;
-        filter: blur(10px);
-        opacity: 0.2;
-        transition: all 0.6s ease;
-    }
-    .logo-counter {
-        width: 30px;
-        height: 30px;
-        font-size: 0.7rem;
-        top: 12px;
-        right: 12px;
-    }
-    .logo-container {
-        gap: 14px;
-        padding: 8px;
-    }
-    .logo-wrapper .flash-overlay {
-        width: 180px;
-        height: 180px;
     }
 }

@@ -1,0 +1,49 @@
+<!-- Услуги -->
+<div class="info-card">
+    <span class="card-icon">🎤</span>
+    <h3>Услуги</h3>
+    <ul>
+        <li>Запись вокала и инструментов</li>
+        <li>Сведение и мастеринг</li>
+        <li>Аранжировка</li>
+        <li>Создание инструменталов</li>
+    </ul>
+</div>
+
+<!-- Контакты -->
+<div class="info-card">
+    <span class="card-icon">📍</span>
+    <h3>Контакты</h3>
+    <ul>
+        {% if studio == 'pillz' %}
+        <li>г. Красноярск, ул. Республики, 51</li>
+        <li><strong>📞</strong> +7 (XXX) XXX-XX-XX</li>
+        <li><strong>✉️</strong> info@pillzstudio.ru</li>
+        {% else %}
+        <li>г. Красноярск, ул. Дубровинского, 43</li>
+        <li><strong>📞</strong> +7 (XXX) XXX-XX-XX</li>
+        <li><strong>✉️</strong> space@pillzstudio.ru</li>
+        {% endif %}
+    </ul>
+    <div class="social-links">
+        <a href="https://vk.com/pillzstudio" target="_blank"><i class="fab fa-vk"></i></a>
+        <a href="https://t.me/pillzstudio" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="https://instagram.com/night_pillz" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+</div>
+
+<!-- Команда -->
+<div class="info-card">
+    <span class="card-icon">👥</span>
+    <h3>Команда</h3>
+    <ul>
+        {% if studio == 'pillz' %}
+        <li><strong>Иван</strong> — звукорежиссёр</li>
+        <li><strong>Анна</strong> — звукорежиссёр</li>
+        <li><strong>Ольга</strong> — администратор</li>
+        {% else %}
+        <li><strong>Максим</strong> — тех. специалист</li>
+        <li><strong>Екатерина</strong> — менеджер</li>
+        {% endif %}
+    </ul>
+</div>
