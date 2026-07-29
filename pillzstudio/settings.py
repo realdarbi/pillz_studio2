@@ -14,8 +14,14 @@ SECRET_KEY = 'django-insecure-l$ym%wzhjsu5bb8^71tqw5ys)4z&15l=h8(r=jd*_jizz*_l3l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.vercel.app', '.now.sh', '.onrender.com']
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.vercel.app',
+    '.now.sh',
+    '.onrender.com',
+    'realdarbi1.pythonanywhere.com',  # ← добавь эту строчку
+]
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
