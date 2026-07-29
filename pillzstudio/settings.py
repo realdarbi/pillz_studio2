@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-l$ym%wzhjsu5bb8^71tqw
 #DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 DEBUG = True
 # Разрешенные хосты
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app,.now.sh').split(',')
 
 # Для Render добавляем .onrender.com, если он не указан в переменной
 if '.onrender.com' not in ALLOWED_HOSTS:
