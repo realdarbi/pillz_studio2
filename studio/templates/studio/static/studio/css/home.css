@@ -5,24 +5,47 @@
     box-sizing: border-box;
 }
 
-body {
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
     background: #0a0a0a;
     color: #fff;
     font-family: 'Montserrat', sans-serif;
-    overflow-x: hidden;
+}
+
+/* ===== ПЕРЕОПРЕДЕЛЯЕМ КОНТЕЙНЕРЫ ===== */
+.container,
+.main-content {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 /* ===== ГЛАВНАЯ ===== */
 #main-page {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100vw;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
     background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0a 100%);
     text-align: center;
-    position: relative;
-    padding: 40px 20px;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+#main-page h1,
+#main-page p,
+#main-page .selector-wrapper {
+    pointer-events: auto;
 }
 
 .main-title {
@@ -161,7 +184,7 @@ body {
 .studio-card-main.pillz .name { color: #ff6b6b; }
 .studio-card-main.space .name { color: #4ecdc4; }
 
-/* ===== СТРАНИЦЫ СТУДИЙ ===== */
+/* ===== ОСТАЛЬНЫЕ СТИЛИ (без изменений) ===== */
 .studio-page {
     display: none;
     min-height: 100vh;
@@ -507,22 +530,7 @@ body {
     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
 }
 
-.map-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 24px;
-    background: rgba(255,255,255,0.02);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    flex-wrap: wrap;
-    gap: 12px;
-}
 
-.map-header-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
 
 .map-icon-wrapper {
     width: 44px;
@@ -612,36 +620,7 @@ body {
     border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 
-.map-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 24px;
-    background: rgba(255,255,255,0.015);
-    border-top: 1px solid rgba(255,255,255,0.03);
-    flex-wrap: wrap;
-    gap: 8px;
-}
 
-.map-footer-text {
-    font-size: 0.78rem;
-    opacity: 0.35;
-    letter-spacing: 0.3px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: opacity 0.3s ease;
-}
-
-.map-footer-text i {
-    font-size: 0.8rem;
-    color: #4ecdc4;
-    opacity: 0.5;
-}
-
-.map-card-inner:hover .map-footer-text {
-    opacity: 0.6;
-}
 
 /* ===== ТЁМНАЯ ТЕМА ДЛЯ LEAFLET ===== */
 .leaflet-tile-pane {
@@ -699,6 +678,7 @@ body {
     background: rgba(255,255,255,0.12);
     transform: translateY(-4px) scale(1.05);
 }
+
 /* ===== МЕНЮ УСЛУГ (СТИЛЬНЫЙ БЛОК) ===== */
 .services-menu-card {
     background: rgba(255,255,255,0.02);
@@ -803,38 +783,31 @@ body {
     padding-left: 16px;
 }
 
-/* Адаптив */
+/* ===== АДАПТИВ ДЛЯ УСЛУГ ===== */
 @media (max-width: 600px) {
     .services-menu-header {
         padding: 14px 16px;
     }
-
     .services-title {
         font-size: 0.95rem;
     }
-
     .services-badge {
         font-size: 0.55rem;
         padding: 3px 10px;
     }
-
     .service-item {
         padding: 12px 16px;
         flex-wrap: wrap;
     }
-
     .service-item:hover {
         padding-left: 16px;
     }
-
     .service-name {
         font-size: 0.85rem;
     }
-
     .service-desc {
         font-size: 0.7rem;
     }
-
     .service-price {
         font-size: 0.85rem;
         padding-left: 0;
@@ -849,75 +822,56 @@ body {
         flex-direction: column;
         gap: 20px;
     }
-
     .studio-cards {
         flex-direction: column;
         min-width: unset;
         width: 100%;
         gap: 16px;
     }
-
     .arrow-btn {
         width: 56px;
         height: 56px;
         font-size: 1.3rem;
     }
-
     .studio-card-main {
         padding: 16px 24px;
         min-width: unset;
     }
-
     .nav-arrow {
         width: 44px;
         height: 44px;
         font-size: 1.2rem;
     }
-
     .nav-arrow.right {
         right: 16px;
     }
-
     .nav-arrow.left {
         left: 16px;
     }
-
     .back-home-btn {
         top: 16px;
         padding: 6px 16px;
         font-size: 0.7rem;
     }
-
     .studio-info {
         padding: 40px 16px 30px;
     }
-
     .info-grid {
         grid-template-columns: 1fr;
     }
-
     .map-header {
         flex-direction: column;
         align-items: flex-start;
         padding: 14px 16px;
     }
-
     .map-route-btn {
         width: 100%;
         justify-content: center;
         padding: 10px;
     }
-
     .map-container {
         height: 180px;
     }
-
-    .map-footer {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 12px 16px;
-    }
-
     #backToTopBtn {
         bottom: 16px;
         right: 16px;

@@ -11,26 +11,34 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os  # ← Добавлено для работы с переменными окружения
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-l$ym%wzhjsu5bb8^71tqw5ys)4z&15l=h8(r=jd*_jizz*_l3l'
+# Для Render: вместо жесткого ключа берем из переменных окружения
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-l$ym%wzhjsu5bb8^71tqw5ys)4z&15l=h8(r=jd*_jizz*_l3l')
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Для Render: через переменную окружения
+# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Разрешенные хосты — добавляем Render-домен
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',  # ← для всех поддоменов Render
+]
+
+# Для Render: если сайт будет на своем домене, добавь его сюда
+
 DEFAULT_CHARSET = 'utf-8'
 FILE_CHARSET = 'utf-8'
 
 # Application definition
-
 INSTALLED_APPS = [
     'admin_interface',
     'colorfield',  
@@ -42,9 +50,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'studio',
 ]
-X_FRAME_OPTIONS = 'SAMEORIGIN'  
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ДЛЯ STATIC НА RENDER (обязательно!)
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -74,22 +85,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'pillzstudio.wsgi.application'
 
 LOGIN_REDIRECT_URL = 'profile'  
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Database — для Render можно оставить SQLite, но лучше перейти на PostgreSQL
+# Пока оставляем SQLite, но потом на Render можно настроить PostgreSQL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 LOGIN_URL = 'login' 
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'home'
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -105,34 +115,36 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'Europe/Moscow'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "studio/static", 
 ]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+# Для Render: папка, куда collectstatic соберет все файлы
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # ← добавлено
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Для Render: хранение статики через Whitenoise
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Cache (пока dummy, можно оставить)
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
@@ -144,3 +156,6 @@ SESSION_COOKIE_AGE = 3600
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 
+# Если на Render будет использоваться PostgreSQL — раскомментируй:
+# import dj_database_url
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
