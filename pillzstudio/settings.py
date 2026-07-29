@@ -11,29 +11,27 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-import os  # ← Добавлено для работы с переменными окружения
+import os
+from dotenv import load_dotenv  # ← Добавлено для работы с .env файлом
+
+# Загружаем переменные из .env файла, если он есть (для локальной разработки)
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
-# Для Render: вместо жесткого ключа берем из переменных окружения
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-l$ym%wzhjsu5bb8^71tqw5ys)4z&15l=h8(r=jd*_jizz*_l3l')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Для Render: через переменную окружения
-# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+#DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 DEBUG = True
+# Разрешенные хосты
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# Разрешенные хосты — добавляем Render-домен
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '.onrender.com',  # ← для всех поддоменов Render
-]
-
-# Для Render: если сайт будет на своем домене, добавь его сюда
+# Для Render добавляем .onrender.com, если он не указан в переменной
+if '.onrender.com' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.onrender.com')
 
 DEFAULT_CHARSET = 'utf-8'
 FILE_CHARSET = 'utf-8'
@@ -41,21 +39,22 @@ FILE_CHARSET = 'utf-8'
 # Application definition
 INSTALLED_APPS = [
     'admin_interface',
-    'colorfield',  
-    'django.contrib.admin',  
+    'colorfield',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'studio',
+    'whitenoise.runserver_nostatic',  # ← Добавлено для Whitenoise
 ]
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ДЛЯ STATIC НА RENDER (обязательно!)
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ← ДЛЯ STATIC НА RENDER
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,7 +68,7 @@ ROOT_URLCONF = 'pillzstudio.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,20 +83,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pillzstudio.wsgi.application'
 
-LOGIN_REDIRECT_URL = 'profile'  
-
-# Database — для Render можно оставить SQLite, но лучше перейти на PostgreSQL
-# Пока оставляем SQLite, но потом на Render можно настроить PostgreSQL
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-LOGIN_URL = 'login' 
-LOGIN_REDIRECT_URL = 'profile'
-LOGOUT_REDIRECT_URL = 'home'
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -124,11 +116,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "studio/static", 
+    BASE_DIR / "studio/static",
 ]
-
-# Для Render: папка, куда collectstatic соберет все файлы
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # ← добавлено
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Для Render: хранение статики через Whitenoise
 STORAGES = {
@@ -144,18 +134,23 @@ STORAGES = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cache (пока dummy, можно оставить)
+# Cache
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
+# Session settings
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
-SESSION_COOKIE_AGE = 3600  
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False') == 'True'
 SESSION_COOKIE_HTTPONLY = True
 
-# Если на Render будет использоваться PostgreSQL — раскомментируй:
-# import dj_database_url
-# DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+# Login/Logout redirects
+LOGIN_REDIRECT_URL = 'profile'
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'home'
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
