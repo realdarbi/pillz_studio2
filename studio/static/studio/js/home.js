@@ -262,6 +262,17 @@ function initMaps() {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
+        // ===== ЗАПРЕЩАЕМ ВСПЛЫТИЕ СОБЫТИЙ С КАРТЫ =====
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        el.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        });
+        el.addEventListener('mouseup', function(e) {
+            e.stopPropagation();
+        });
+
         const customIcon = L.divIcon({
             className: 'custom-marker',
             html: `<div style="
@@ -287,7 +298,15 @@ function initMaps() {
         setTimeout(() => map.invalidateSize(), 300);
     });
 }
-
+// В home.js, после инициализации карт
+document.querySelectorAll('.map-card').forEach(function(card) {
+    card.addEventListener('click', function(e) {
+        // Если клик был внутри карты — блокируем
+        if (e.target.closest('.map-container')) {
+            e.stopPropagation();
+        }
+    });
+});
 // ===== ОБОРУДОВАНИЕ =====
 function initEquipment() {
     document.querySelectorAll('.equipment-section').forEach((section) => {
@@ -453,3 +472,18 @@ document.addEventListener('DOMContentLoaded', () => {
 window.initEquipment = initEquipment;
 window.switchStudio = switchStudio;
 window.goHome = goHome;
+document.addEventListener('DOMContentLoaded', function() {
+    // Запрещаем кликам на картах вызывать переходы
+    document.querySelectorAll('.map-container').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        // Также блокируем mousedown, чтобы не срабатывали родительские обработчики
+        el.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+        });
+        el.addEventListener('mouseup', function(e) {
+            e.stopPropagation();
+        });
+    });
+});

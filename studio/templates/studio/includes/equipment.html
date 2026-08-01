@@ -232,6 +232,11 @@
             {% if studio == 'pillz' %}
                 <!-- ===== PILLZ STUDIO ===== -->
                 <div class="equipment-card">
+                    <img src="{% static 'studio/media/equipment/PC.png' %}" alt="Микрофон" class="equipment-card-image">
+                    <span class="equipment-card-name">ПК</span>
+                    <span class="equipment-card-desc">Идеальный творческий ПК</span>
+                </div>
+                <div class="equipment-card">
                     <img src="{% static 'studio/media/equipment/microphone.png' %}" alt="Микрофон" class="equipment-card-image">
                     <span class="equipment-card-name">Микрофон</span>
                     <span class="equipment-card-desc">Warm Audio jr47</span>
@@ -274,11 +279,16 @@
                 <div class="equipment-card">
                     <img src="{% static 'studio/media/equipment/amplifier.png' %}" alt="Усилитель" class="equipment-card-image">
                     <span class="equipment-card-name">Усилитель для наушников</span>
-                    <span class="equipment-card-desc">Behringer HA400</span>
+                    <span class="equipment-card-desc">Zoom ZHA-4</span>
                 </div>
 
             {% else %}
                 <!-- ===== SPACE PILLZ ===== -->
+                 <div class="equipment-card">
+                    <img src="{% static 'studio/media/equipment/PC_space.png' %}" alt="Микрофон" class="equipment-card-image">
+                    <span class="equipment-card-name">Ноутбук</span>
+                    <span class="equipment-card-desc">Идеальный творческий ноутбук</span>
+                </div>
                 <div class="equipment-card">
                     <img src="{% static 'studio/media/equipment/space_microphone.png' %}" alt="Микрофон" class="equipment-card-image">
                     <span class="equipment-card-name">Микрофон</span>
@@ -297,7 +307,7 @@
                 <div class="equipment-card">
                     <img src="{% static 'studio/media/equipment/space_midi.png' %}" alt="MIDI-клавиатура" class="equipment-card-image">
                     <span class="equipment-card-name">MIDI-клавиатура</span>
-                    <span class="equipment-card-desc">AKAI MPK Mini</span>
+                    <span class="equipment-card-desc">Arturia Minilab 3</span>
                 </div>
                 <div class="equipment-card">
                     <img src="{% static 'studio/media/equipment/space_headphones1.png' %}" alt="Наушники" class="equipment-card-image">
@@ -306,9 +316,20 @@
                 </div>
                 <div class="equipment-card">
                     <img src="{% static 'studio/media/equipment/space_headphones2.png' %}" alt="Микшер" class="equipment-card-image">
-                    <span class="equipment-card-name">наушники</span>
+                    <span class="equipment-card-name">Наушники</span>
                     <span class="equipment-card-desc">Akg k92</span>
                 </div>
+                <div class="equipment-card">
+                    <img src="{% static 'studio/media/equipment/amplifier_space.png' %}" alt="Усилитель" class="equipment-card-image">
+                    <span class="equipment-card-name">Усилитель для наушников</span>
+                    <span class="equipment-card-desc">Behringer HA400</span>
+                </div>
+                <div class="equipment-card">
+                    <img src="{% static 'studio/media/equipment/guitar_space.png' %}" alt="Усилитель" class="equipment-card-image">
+                    <span class="equipment-card-name">Электрогитара</span>
+                    <span class="equipment-card-desc">IBANEZ GRG121DX-WNF</span>
+                </div>
+                
             {% endif %}
         </div>
     </div>

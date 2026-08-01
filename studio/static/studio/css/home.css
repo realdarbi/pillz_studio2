@@ -714,7 +714,15 @@ body {
     padding: 0 !important;
     margin-top: 20px;
 }
+.map-container {
+    pointer-events: auto; /* или none, если карта не должна быть интерактивной */
+    cursor: default;
+}
 
+/* Если нужно, чтобы карта была НЕ интерактивной */
+.map-container .leaflet-container {
+    pointer-events: auto;
+}
 .map-card-inner {
     background: rgba(255,255,255,0.02);
     border: 1px solid rgba(255,255,255,0.06);
@@ -1069,9 +1077,30 @@ body {
 
 /* ===== АДАПТИВ ===== */
 @media (max-width: 768px) {
+    .main-title {
+        font-size: clamp(2.5rem, 8vw, 3.5rem) !important;
+        line-height: 1.1 !important;  /* ← уменьшаем межстрочный интервал */
+        letter-spacing: 4px !important;
+        margin-bottom: 8px !important;
+        text-align: center;
+    }
+
+    .main-subtitle {
+        font-size: clamp(0.8rem, 2vw, 1rem) !important;
+        letter-spacing: 4px !important;
+        margin-bottom: 30px !important;
+    }
+    .arrow-btn {
+        display: none !important;
+    }
     .selector-wrapper {
-        flex-direction: column;
-        gap: 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        padding: 0 10px;
     }
 
     .studio-cards {
@@ -1133,7 +1162,7 @@ body {
     }
 
     .map-container {
-        height: 180px;
+        height: 280px;
     }
 
     .map-footer {
