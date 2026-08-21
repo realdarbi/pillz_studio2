@@ -24,6 +24,7 @@ from django.contrib.auth.views import LogoutView
 from studio.admin import studio_admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 
 
 urlpatterns = [
@@ -34,6 +35,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('profile/', views.profile, name='profile'),
     path('studio-admin/', studio_admin.urls),
+    path('favicon.ico', RedirectView.as_view(url='/static/studio/favicon.ico', permanent=True)),
 ]
 
 if settings.DEBUG:
