@@ -2,12 +2,16 @@
 Django settings for pillzstudio project.
 """
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+APP_NAME = os.getenv("APP_NAME", "Pillz Studio")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-l$ym%wzhjsu5bb8^71tqw5ys)4z&15l=h8(r=jd*_jizz*_l3l'
 

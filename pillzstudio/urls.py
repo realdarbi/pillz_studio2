@@ -25,6 +25,7 @@ from studio.admin import studio_admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+from studio import api_views
 
 
 urlpatterns = [
@@ -36,6 +37,11 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('studio-admin/', studio_admin.urls),
     path('favicon.ico', RedirectView.as_view(url='/static/studio/favicon.ico', permanent=True)),
+    # API-эндпоинты 
+    path('items/<int:item_id>/', api_views.item_detail, name='api-item-detail'),
+    path('items/', api_views.create_item, name='api-item-create'),
+    path('users/', api_views.users_list, name='api-users'),
+    path('status/', api_views.status, name='api-status'),
 ]
 
 if settings.DEBUG:
