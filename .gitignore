@@ -17,3 +17,7 @@ Thumbs.db
 
 .env
 .pytest_cache/
+
+*.db
+*.sqlite
+*.sqlite3

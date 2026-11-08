@@ -21,7 +21,6 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from studio import views
 from django.contrib.auth.views import LogoutView
-from studio.admin import studio_admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
@@ -29,13 +28,11 @@ from studio import api_views
 
 
 urlpatterns = [
-  #  path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('', include('studio.urls')),
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='studio/login.html'), name='login'),
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
-    path('profile/', views.profile, name='profile'),
-    path('studio-admin/', studio_admin.urls),
     path('favicon.ico', RedirectView.as_view(url='/static/studio/favicon.ico', permanent=True)),
     # API-эндпоинты 
     path('items/<int:item_id>/', api_views.item_detail, name='api-item-detail'),

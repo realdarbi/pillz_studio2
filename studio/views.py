@@ -1,32 +1,23 @@
 ﻿# -*- coding: utf-8 -*-
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.urls import reverse
 from django.contrib import messages
-from django.utils import timezone
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth.views import LoginView
-from django.views.decorators.http import require_http_methods
-from .models import ServiceType, Portfolio, Service, Booking, Profile, Review
-from .forms import RegisterForm, BookingForm
-import logging
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_protect
-from django.utils.deprecation import MiddlewareMixin
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from .forms import ChangeUsernameForm
+import logging
 
-
+from .models import ServiceType, Profile, Order
+from .forms import RegisterForm, ChangeUsernameForm
 
 logger = logging.getLogger(__name__)
 
 def is_ajax(request):
-    
     return request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
 class CustomLoginView(LoginView):
@@ -57,7 +48,6 @@ class CustomLoginView(LoginView):
         return super().get(request, *args, **kwargs)
     
     def form_valid(self, form):
-        """Обработка успешной авторизации"""
         if is_ajax(self.request):
             login(self.request, form.get_user())
             return JsonResponse({
@@ -69,7 +59,6 @@ class CustomLoginView(LoginView):
         return super().form_valid(form)
     
     def form_invalid(self, form):
-        """Обработка неудачной авторизации"""
         error_message = 'Неверный логин или пароль'
         if is_ajax(self.request):
             try:
@@ -89,14 +78,13 @@ class CustomLoginView(LoginView):
         return super().form_invalid(form)
     
     def get_success_url(self):
-        """Определяем URL для перенаправления после успешного входа"""
         redirect_to = self.request.POST.get('next') or self.request.GET.get('next')
         if redirect_to and url_has_allowed_host_and_scheme(redirect_to, allowed_hosts=None):
             return redirect_to
         return super().get_success_url()
-@require_http_methods(["GET", "POST"])
-@csrf_protect
 
+
+@csrf_protect
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -117,209 +105,51 @@ def register(request):
                 if is_ajax(request):
                     return JsonResponse({
                         'success': False,
-                        'html': render_to_string(
-                            'studio/register_form.html',
-                            {'form': form},
-                            request=request
-                        )
+                        'html': render_to_string('studio/register_form.html', {'form': form}, request=request)
                     }, status=400)
                 messages.error(request, f"Ошибка регистрации: {str(e)}")
         
         if is_ajax(request):
             return JsonResponse({
                 'success': False,
-                'html': render_to_string(
-                    'studio/register_form.html',
-                    {'form': form},
-                    request=request
-                )
+                'html': render_to_string('studio/register_form.html', {'form': form}, request=request)
             }, status=400)
     
     form = RegisterForm()
-    
     if is_ajax(request):
         return JsonResponse({
-            'html': render_to_string(
-                'studio/register_form.html',
-                {'form': form},
-                request=request
-            )
+            'html': render_to_string('studio/register_form.html', {'form': form}, request=request)
         })
     
     return render(request, 'studio/register.html', {'form': form})
+
+
 def custom_logout(request):
-    
     logout(request)
     messages.success(request, "Вы успешно вышли из системы")
     return redirect(reverse('login'))
 
 
-
-
-from .forms import (
-    RecordingServiceForm, MixingServiceForm, 
-    InstrumentalServiceForm, LyricsServiceForm,
-    FullSongServiceForm, CreateServiceForm
-)
-from .models import (
-    RecordingServiceParams, MixingServiceParams,
-    InstrumentalServiceParams, LyricsServiceParams,
-    FullSongServiceParams
-)
-@csrf_protect
-@login_required
-def service_detail(request, pk):
-    service_type = get_object_or_404(ServiceType, pk=pk)
-    
-    form_mapping = {
-        'recording': RecordingServiceForm,
-        'mixing': MixingServiceForm,
-        'instrumental': InstrumentalServiceForm,
-        'lyrics': LyricsServiceForm,
-        'full_song': FullSongServiceForm,
-    }
-    
-    params_form_class = form_mapping.get(service_type.category)
-    
-    if request.method == 'POST':
-        params_form = params_form_class(request.POST, request.FILES)
-        
-        if params_form.is_valid():
-            try:
-                service = Service(
-                    client=request.user,
-                    service_type=service_type,
-                    status='pending',
-                    price=service_type.min_price,
-                    date_ordered=timezone.now()
-                )
-                
-                cleaned_data = params_form.cleaned_data
-                
-                if service_type.category == 'recording':
-                    if cleaned_data['hours'] >= 3 and not cleaned_data['unknown_hours']:
-                        service.price += 500 * cleaned_data['hours']
-                    if not cleaned_data['sound_engineer']:
-                        service.price -= 200
-                elif service_type.category == 'mixing':
-                    if cleaned_data['express']:
-                        service.price += 500
-                    if cleaned_data['mastering']:
-                        service.price += 300
-                elif service_type.category == 'instrumental':
-                    if cleaned_data['remake_beat']:
-                        service.price += 1000
-                
-                service.save()
-                
-                params = params_form.save(commit=False)
-                params.service = service
-                params.save()
-                
-                messages.success(request, f"Заявка на {service_type.name} создана!")
-                return redirect('profile')
-                
-            except Exception as e:
-                logger.error(f"Service creation error: {str(e)}")
-                messages.error(request, f"Ошибка: {str(e)}")
-    else:
-        params_form = params_form_class()
-    
-    context = {
-        'service': service_type,
-        'params_form': params_form,
-        'now': timezone.now().strftime("%Y-%m-%d")
-    }
-    
-    return render(request, f'studio/service_{service_type.category}.html', context)
 @login_required
 def profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
-    
-    if request.method == 'POST' and 'avatar' in request.FILES:
-        try:
-            if profile.avatar:
-                profile.avatar.delete()
-            
-            profile.avatar = request.FILES['avatar']
-            profile.save()
-            
-            messages.success(request, 'Аватар успешно обновлен!')
-            return redirect('profile')
-            
-        except Exception as e:
-            logger.error(f"Error updating avatar: {str(e)}")
-            messages.error(request, f'Ошибка при обновлении аватара: {str(e)}')
-    
-    active_bookings = Service.objects.filter(
-        client=request.user
-    ).exclude(
-        Q(status='completed') | Q(status='canceled')
-    ).select_related('service_type').prefetch_related('service_reviews').order_by('-date_ordered')
-    
-    completed_orders = Service.objects.filter(
-        client=request.user,
-        status='completed'
-    ).select_related('service_type').prefetch_related('service_reviews').order_by('-date_completed')
-    
-    context = {
-        'user': request.user,
-        'profile': profile,
-        'active_bookings': active_bookings,
-        'completed_orders': completed_orders,
-        'bookings_count': active_bookings.count(),
-        'completed_orders_count': completed_orders.count()
-    }
-    
-    return render(request, 'studio/profile.html', context)
-@csrf_protect
-@login_required
-@require_POST
-def cancel_order(request, order_id):
-    try:
-        order = Service.objects.get(id=order_id, client=request.user)
-        
-        if order.status == 'pending':
-            order.status = 'canceled'
-            order.save()
-            
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'success', 'message': 'Запись успешно отменена'})
-            
-            messages.success(request, 'Запись успешно отменена')
-            return redirect('profile')
-        
-        error_msg = 'Невозможно отменить запись в текущем статусе'
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'status': 'error', 'message': error_msg}, status=400)
-        
-        messages.error(request, error_msg)
-        return redirect('profile')
-    
-    except Service.DoesNotExist:
-        error_msg = 'Запись не найдена'
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'status': 'error', 'message': error_msg}, status=404)
-        
-        messages.error(request, error_msg)
-        return redirect('profile')
+    # Временная заглушка, чтобы главная страница не падала из-за ссылок в шапке
+    return render(request, 'studio/home.html', {'message': 'Профиль в разработке'})
+
+
 @csrf_protect
 def home(request):
-    CATEGORY_ORDER = ['recording', 'mixing', 'instrumental', 'lyrics', 'full_song']
-    
-    services = sorted(
-        ServiceType.objects.filter(is_active=True),
-        key=lambda x: CATEGORY_ORDER.index(x.category)
-    )[:5]
+    # Убрал старую сортировку (recording, mixing и т.д.), так как у нас теперь другие категории
+    services = ServiceType.objects.filter(is_active=True)
     
     return render(request, 'studio/home.html', {
         'services': services,
         'title': 'Главная',
         'heading': 'Популярные услуги'
     })
+
+
 @csrf_protect
 def services_list(request):
-    
     services = ServiceType.objects.filter(is_active=True)
     return render(request, 'studio/home.html', {
         'services': services,
@@ -327,40 +157,6 @@ def services_list(request):
         'heading': 'Полный список услуг'
     })
 
-@login_required
-@require_POST
-def delete_account(request):
-    try:
-        user = request.user
-        
-        Service.objects.filter(client=user).delete()
-        Booking.objects.filter(client=user).delete()
-        Review.objects.filter(author=user).delete()
-        Profile.objects.filter(user=user).delete()
-        user.delete()
-        
-        logout(request)
-        
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'status': 'success', 
-                'message': 'Ваш аккаунт и все связанные данные были успешно удалены.',
-                'redirect_url': reverse('home')
-            })
-        
-        messages.success(request, 'Ваш аккаунт и все связанные данные были успешно удалены.')
-        return redirect('home')
-    
-    except Exception as e:
-        logger.error(f"Error deleting user account: {str(e)}")
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Произошла ошибка при удалении аккаунта.'
-            }, status=400)
-        
-        messages.error(request, 'Произошла ошибка при удалении аккаунта.')
-        return redirect('profile')
 
 @login_required
 @require_POST
@@ -371,7 +167,6 @@ def change_username(request):
         try:
             new_username = form.cleaned_data['new_username']
             user = request.user
-            
             user.username = new_username
             user.save()
             
